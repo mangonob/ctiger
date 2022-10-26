@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "cppbuild",
+      "label": "Build Current Target",
+      "command": "/usr/bin/make",
+      "args": ["${fileBasenameNoExtension}.out"],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "group": "none"
+    }
+  ]
+}
