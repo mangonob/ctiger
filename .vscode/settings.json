@@ -1,5 +1,7 @@
 {
   "files.exclude": {
+    "*.o": true,
+    "*.out": true,
     "**/*.dSYM/": true
   }
 }
