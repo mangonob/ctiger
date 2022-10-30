@@ -6,5 +6,7 @@ void foo();
 void srand(unsigned int seed);
 /** Generate pseudo random number in range (0~22767) */
 int rand0();
+/** Generate pseudo random number in range [0, 1) */
+double randf();
 
 #endif
