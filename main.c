@@ -19,16 +19,14 @@ int main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
-  char ch;
-  int count = 0;
-  while ((ch = getc(f)) != EOF)
+  int s = fseek(f, 0, SEEK_END);
+  while (fseek(f, -1, SEEK_CUR) == 0)
   {
-    putc(ch, stdout);
-    count++;
+    char ch = fgetc(f);
+    putchar(ch);
+    ungetc(ch, f);
   }
-  fclose(f);
-
-  printf("\nTotal char count is %d\n", count);
+  putchar('\n');
 
   return 0;
 }
