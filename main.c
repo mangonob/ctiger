@@ -1,23 +1,21 @@
 #include <stdio.h>
+#define ARR_SIZE 100
 
 typedef struct
 {
-  int a;
-  int b;
-} Struc;
-
-void foo(Struc s);
+  int elements[ARR_SIZE];
+} Array;
 
 int main(int argc, char *argv[])
 {
-  Struc s1 = {1, 2};
-  foo(s1);
-  printf("%d, %d\n", s1.a, s1.b);
-  return 0;
-}
+  Array s1 = {{1, 2, 3, 4, 5, 6, 7}};
+  Array s2 = s1;
 
-void foo(Struc s)
-{
-  s.a += 1;
-  s.b += 1;
+  for (int i = 0; i < ARR_SIZE; i++)
+  {
+    printf("%d, ", s2.elements[i]);
+  }
+
+  puts("");
+  return 0;
 }
