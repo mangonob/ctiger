@@ -1,21 +1,37 @@
 #include <stdio.h>
 #define ARR_SIZE 100
 
+typedef enum
+{
+  Success,
+  Failure,
+} ResultType;
+
 typedef struct
 {
-  int elements[ARR_SIZE];
-} Array;
+  ResultType type;
+  union
+  {
+    void *value;
+    char *error;
+  };
+} Result;
 
 int main(int argc, char *argv[])
 {
-  Array s1 = {{1, 2, 3, 4, 5, 6, 7}};
-  Array s2 = s1;
+  Result r = {
+      .type = Failure,
+      .error = "Something went wrong",
+  };
 
-  for (int i = 0; i < ARR_SIZE; i++)
+  switch (r.type)
   {
-    printf("%d, ", s2.elements[i]);
+  case Failure:
+    printf("Error: %s\n", r.error);
+    break;
+  case Success:
+    printf("Success\n");
+    break;
   }
-
-  puts("");
   return 0;
 }
