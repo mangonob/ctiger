@@ -1,11 +1,10 @@
 #include <stdio.h>
-
-typedef char Byte;
-typedef char *String;
+#include <stdlib.h>
+#include <string.h>
+#include "lexer/lexer.h"
 
 int main(int argc, char *argv[])
 {
-  String message = "Hello World!";
-  printf("%s\n", message);
+  yylex();
   return 0;
 }

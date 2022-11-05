@@ -1,4 +1,5 @@
 #ifndef __TOKEN_HEADER__
+#define __TOKEN_HEADER__
 
 typedef union
 {

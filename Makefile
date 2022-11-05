@@ -1,13 +1,15 @@
-main.out: main.o foo.o
-	gcc -o main.out main.o foo.o
+main.out: main.o lexer
+	gcc -o main.out main.o lexer/lex.yy.o
 
-foo.o: foo.c foo.h
-	cc -g -c foo.c
+lexer: .FORCE
+	$(MAKE) -C lexer
 
-main.o: main.c foo.h
+main.o: main.c
 	cc -g -c main.c
 
 clean:
-	-rm -rf *.out
-	-rm -rf *.o
-	-rm -rf *.dSYM
+	-rm -rf **/*.out
+	-rm -rf **/*.o
+	-rm -rf **/*.dSYM
+
+.FORCE:
