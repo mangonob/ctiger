@@ -13,14 +13,12 @@ Pos pos;
 %s string
 %s comment 
 
-Digth		[0-9]
+DIGIT		[0-9]
 %%
 
-[ \t]       pos.col += 1;
-\n          pos.col = 0; pos.row += 1;
-[^ \t\n]+   {
-    pos.col += yyleng; yy_push_state(string); 
-    pos.col += yyleng; printf("content %s length %ld\n", yytext, yyleng);
-}
+[ \t\n]     pos.col += 1;
+{DIGIT}+    return INT;
+\+          return PLUS;
+<<EOF>>     return EOF;
 
 %%

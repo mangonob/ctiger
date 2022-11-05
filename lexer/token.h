@@ -12,7 +12,7 @@ extern YYSTYPE yylval;
 
 typedef enum
 {
-  ID = 257,
+  ID,
   STRING,
   INT,
   COMMA,
