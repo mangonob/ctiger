@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch",
       "preLaunchTask": "Build Default Target",
-      "program": "${workspaceFolder}/main.out",
+      "program": "${workspaceFolder}/build/a.out",
       "args": [],
       "cwd": "${workspaceFolder}"
     }

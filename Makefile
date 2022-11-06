@@ -1,15 +1,22 @@
-main.out: main.o lexer
-	gcc -o main.out main.o lexer/lex.yy.o
+INCLUDE=./include
+SOURCE=./src
+OUTPUT=./build
 
-lexer: .FORCE
-	$(MAKE) -C lexer
+objects = $(patsubst src/%.c,build/%.o,$(wildcard src/*.c))
 
-main.o: main.c
-	cc -g -c main.c
+$(OUTPUT)/a.out: $(objects)
+	$(CC) -o $@ $(objects)
 
+$(OUTPUT)/%.o: $(SOURCE)/%.c $(SOURCE)/*.h $(INCLUDE)/*.h
+	$(CC) -g -c -I $(INCLUDE) -o $@ $<
+
+$(SOURCE)/parser.c: $(SOURCE)/parser.y
+	yacc -r all -d -o $@ $(SOURCE)/parser.y
+
+$(SOURCE)/lexer.c: $(SOURCE)/lexer.x
+	lex -o $@ $(SOURCE)/lexer.x
+
+.PHONY: clean
 clean:
-	-rm -rf **/*.out
-	-rm -rf **/*.o
-	-rm -rf **/*.dSYM
-
-.FORCE:
+	-rm -rf ./build/*
+	-rm -rf *.dSYM

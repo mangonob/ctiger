@@ -1,4 +1,7 @@
 .DS_Store
 *.dSYM/
+build/*
+!build/.gitkeep
 *.o
 *.out
+*.output
