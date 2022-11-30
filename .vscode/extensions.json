@@ -2,7 +2,6 @@
   "recommendations": [
     "luniclynx.lex",
     "ms-vscode.cpptools",
-    "ms-vscode.cpptools-extension-pack",
     "vadimcn.vscode-lldb"
   ]
 }

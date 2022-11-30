@@ -5,3 +5,4 @@ build/*
 *.o
 *.out
 *.output
+*.o.tig

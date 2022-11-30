@@ -39,7 +39,7 @@ void append_char(char ch) {
 %x  COMMENT
 
 DIGIT       [0-9]
-ID          [a-z_][a-zA-Z0-9]*
+ID          [a-zA-Z_][a-zA-Z0-9_]*
 %%
 
     yyin = input ? input : stdin;

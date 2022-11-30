@@ -24,7 +24,7 @@ A_exp A_IntExp(A_Pos pos, int i)
   return p;
 }
 
-A_exp A_StrExp(A_Pos pos, A_id str)
+A_exp A_StrExp(A_Pos pos, char *str)
 {
   A_exp p = _malloc(sizeof(*p));
   p->type = A_strExp;
@@ -41,11 +41,11 @@ A_exp A_NilExp(A_Pos pos)
   return p;
 }
 
-A_exp A_VarExp(A_Pos pos, A_var var)
+A_exp A_VarExp(A_var var)
 {
   A_exp p = _malloc(sizeof(*p));
   p->type = A_varExp;
-  p->pos = pos;
+  p->pos = var->pos;
   p->var = var;
   return p;
 }
@@ -90,13 +90,24 @@ A_exp A_OpExp(A_Pos pos, A_oper oper, A_exp lhs, A_exp rhs)
   return p;
 }
 
-A_exp A_RecordExp(A_Pos pos, A_id name, A_record_list record_list)
+A_exp A_RecordExp(A_Pos pos, A_id type_id, A_record_list record_list)
 {
   A_exp p = _malloc(sizeof(*p));
   p->type = A_recordExp;
   p->pos = pos;
-  p->record.name = name;
+  p->record.type_id = type_id;
   p->record.record_list = record_list;
+  return p;
+}
+
+A_exp A_ArrayExp(A_Pos pos, A_id type_id, A_exp capcity, A_exp element)
+{
+  A_exp p = _malloc(sizeof(*p));
+  p->type = A_arrayExp;
+  p->pos = pos;
+  p->array.type_id = type_id;
+  p->array.capcity = capcity;
+  p->array.element = element;
   return p;
 }
 
@@ -188,11 +199,75 @@ A_expseq A_ExpSeq(A_exp head, A_expseq tail)
   return p;
 }
 
+A_record A_Record(A_Pos pos, A_id name, A_exp value)
+{
+  A_record p = _malloc(sizeof(*p));
+  p->pos = pos;
+  p->name = name;
+  p->value = value;
+  return p;
+}
+
 A_record_list A_RecordList(A_record head, A_record_list tail)
 {
   A_record_list p = _malloc(sizeof(*p));
   p->head = head;
   p->tail = tail;
+  return p;
+}
+
+A_dec A_FuncDec(A_Pos pos, A_id name, A_tyfields parameters, A_id return_type, A_exp init)
+{
+  A_dec p = _malloc(sizeof(*p));
+  p->type = A_funcDec;
+  p->pos = pos;
+  p->funcdec.funcname = name;
+  p->funcdec.parameters = parameters;
+  p->funcdec.return_type = return_type;
+  p->funcdec.init = init;
+  return p;
+}
+
+A_dec A_TypeDec(A_Pos pos, A_id type_id, A_ty ty)
+{
+  A_dec p = _malloc(sizeof(*p));
+  p->type = A_typeDec;
+  p->typedec.type_id = type_id;
+  p->typedec.ty = ty;
+  return p;
+}
+
+A_dec A_VarDec(A_Pos pos, A_id var, A_id type_id, A_exp exp)
+{
+  A_dec p = _malloc(sizeof(*p));
+  p->type = A_varDec;
+  p->vardec.var = var;
+  p->vardec.type_id = type_id;
+  p->vardec.exp = exp;
+  return p;
+}
+
+A_ty A_NamedTy(A_Pos pos, A_id named)
+{
+  A_ty p = _malloc(sizeof(*p));
+  p->type = A_namedTy;
+  p->named = named;
+  return p;
+}
+
+A_ty A_ArrayTy(A_Pos pos, A_id array)
+{
+  A_ty p = _malloc(sizeof(*p));
+  p->type = A_arrayTy;
+  p->array = array;
+  return p;
+}
+
+A_ty A_RecordTy(A_Pos pos, A_tyfields fields)
+{
+  A_ty p = _malloc(sizeof(*p));
+  p->type = A_recordTy;
+  p->fields = fields;
   return p;
 }
 
@@ -209,6 +284,15 @@ A_tyfields A_TyFields(A_tyfield head, A_tyfields tail)
   A_tyfields p = _malloc(sizeof(*p));
   p->head = head;
   p->tail = tail;
+  return p;
+}
+
+A_tyfield A_TyField(A_Pos pos, A_id name, A_id type_id)
+{
+  A_tyfield p = _malloc(sizeof(*p));
+  p->name = name;
+  p->type_id = type_id;
+  p->pos = pos;
   return p;
 }
 

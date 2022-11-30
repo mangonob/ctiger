@@ -138,7 +138,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 20 "./src/parser.y"
+#line 18 "./src/parser.y"
 {
     long ival;
     char *sval;
@@ -148,6 +148,7 @@ typedef union YYSTYPE
     A_expseq    expseq;
     A_expseq    arg_list;
     A_record_list   record_list;
+    A_record    record;
     A_decs  decs;
     A_dec   dec;
     A_ty    ty;
@@ -156,7 +157,7 @@ typedef union YYSTYPE
     A_id    id;
 }
 /* Line 1529 of yacc.c.  */
-#line 160 "src/parser.h"
+#line 161 "src/parser.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -50,6 +50,7 @@ struct A_exp_
     A_callExp,
     A_opExp,
     A_recordExp,
+    A_arrayExp,
     A_ifExp,
     A_whileExp,
     A_forExp,
@@ -59,7 +60,7 @@ struct A_exp_
   A_Pos pos;
   union
   {
-    A_id str;
+    char *str;
     int int_value;
     A_var var;
     struct
@@ -81,9 +82,15 @@ struct A_exp_
     } op;
     struct
     {
-      A_id name;
+      A_id type_id;
       A_record_list record_list;
     } record;
+    struct
+    {
+      A_id type_id;
+      A_exp capcity;
+      A_exp element;
+    } array;
     struct
     {
       A_exp condition;
@@ -143,6 +150,7 @@ struct A_expseq_
 
 struct A_record_
 {
+  A_Pos pos;
   A_id name;
   A_exp value;
 };
@@ -208,10 +216,10 @@ struct A_decs_
   A_decs tail;
 };
 
-struct A_tyfiled_
+struct A_tyfield_
 {
   A_id name;
-  A_id type;
+  A_id type_id;
   A_Pos pos;
 };
 
@@ -230,14 +238,15 @@ struct A_id_
 void *_malloc(size_t byte);
 
 A_exp A_IntExp(A_Pos pos, int i);
-A_exp A_StrExp(A_Pos pos, A_id str);
+A_exp A_StrExp(A_Pos pos, char *str);
 A_exp A_NilExp(A_Pos pos);
-A_exp A_VarExp(A_Pos pos, A_var var);
+A_exp A_VarExp(A_var var);
 A_exp A_AssignExp(A_Pos pos, A_var var, A_exp exp);
 A_exp A_SeqExp(A_Pos pos, A_expseq seq);
 A_exp A_CallExp(A_Pos pos, A_id func, A_expseq args);
 A_exp A_OpExp(A_Pos pos, A_oper oper, A_exp lhs, A_exp rhs);
-A_exp A_RecordExp(A_Pos pos, A_id name, A_record_list record_list);
+A_exp A_RecordExp(A_Pos pos, A_id type_id, A_record_list record_list);
+A_exp A_ArrayExp(A_Pos pos, A_id type_id, A_exp capcity, A_exp element);
 A_exp A_IfExp(A_Pos pos, A_exp condition, A_exp body, A_exp els);
 A_exp A_WhileExp(A_Pos pos, A_exp condition, A_exp body);
 A_exp A_ForExp(A_Pos pos, A_id var, A_exp lo, A_exp hi, A_exp body);
@@ -247,9 +256,17 @@ A_var A_SimpleVar(A_Pos pos, A_id name);
 A_var A_FieldVar(A_Pos pos, A_var var, A_id name);
 A_var A_SubscriptVar(A_Pos pos, A_var var, A_exp exp);
 A_expseq A_ExpSeq(A_exp head, A_expseq tail);
+A_record A_Record(A_Pos pos, A_id name, A_exp value);
 A_record_list A_RecordList(A_record head, A_record_list tail);
+A_dec A_FuncDec(A_Pos pos, A_id name, A_tyfields parameters, A_id return_type, A_exp init);
+A_dec A_TypeDec(A_Pos pos, A_id type_id, A_ty ty);
+A_dec A_VarDec(A_Pos pos, A_id var, A_id type_id, A_exp exp);
+A_ty A_NamedTy(A_Pos pos, A_id named);
+A_ty A_ArrayTy(A_Pos pos, A_id array);
+A_ty A_RecordTy(A_Pos pos, A_tyfields fields);
 A_decs A_Decs(A_dec head, A_decs tail);
 A_tyfields A_TyFields(A_tyfield head, A_tyfields tail);
+A_tyfield A_TyField(A_Pos pos, A_id name, A_id type_id);
 A_id A_Id(A_Pos pos, char *id);
 
 #endif
