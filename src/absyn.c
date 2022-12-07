@@ -1,21 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "absyn.h"
+#include "utils.h"
 
-void *_malloc(size_t byte)
-{
-  void *p = malloc(byte);
-
-  if (!p)
-  {
-    fprintf(stderr, "bad memory allocation");
-    exit(1);
-  }
-  else
-    return p;
-}
-
-A_exp A_IntExp(A_Pos pos, int i)
+A_exp A_IntExp(A_Pos pos, long i)
 {
   A_exp p = _malloc(sizeof(*p));
   p->type = A_intExp;

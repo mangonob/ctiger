@@ -20,7 +20,5 @@
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
     "editor.detectIndentation": false
-  },
-  "C_Cpp.default.includePath": ["./include"],
-  "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"
+  }
 }

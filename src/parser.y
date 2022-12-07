@@ -86,7 +86,7 @@ A_exp parser_root;
 %left "*" "/"
 %left UMINUS
 
-%type <exp> exp
+%type <exp> exp prog
 %type <lvalue> lvalue
 %type <expseq> expseq expseq_
 %type <arg_list> arg_list arg_list_
@@ -102,7 +102,7 @@ A_exp parser_root;
 /* Grammar follows */
 %%
 
-prog:       exp                                 { parser_root = $1; }
+prog:       exp                                 { $$ = $1; parser_root = $1; }
 
 exp:        INT                                 { $$ = A_IntExp(LOC(@1), $1); }
             | STRING                            { $$ = A_StrExp(LOC(@1), $1); }

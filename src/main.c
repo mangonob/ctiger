@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "absyn.h"
 #include "parser.h"
 #include "print_absyn.h"

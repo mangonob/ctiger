@@ -164,7 +164,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 1 "./src/parser.y"
+#line 1 "/Users/mangonob/Developer/ctiger/src/parser.y"
 
 #include <math.h>
 #include <stdio.h>
@@ -199,7 +199,7 @@ A_exp parser_root;
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 18 "./src/parser.y"
+#line 18 "/Users/mangonob/Developer/ctiger/src/parser.y"
 {
     long ival;
     char *sval;
@@ -218,7 +218,7 @@ typedef union YYSTYPE
     A_id    id;
 }
 /* Line 193 of yacc.c.  */
-#line 222 "src/parser.c"
+#line 222 "/Users/mangonob/Developer/ctiger/src/parser.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -243,7 +243,7 @@ typedef struct YYLTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 247 "src/parser.c"
+#line 247 "/Users/mangonob/Developer/ctiger/src/parser.c"
 
 #ifdef short
 # undef short
@@ -1603,333 +1603,333 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 105 "./src/parser.y"
-    { parser_root = (yyvsp[(1) - (1)].exp); }
+#line 105 "/Users/mangonob/Developer/ctiger/src/parser.y"
+    { (yyval.exp) = (yyvsp[(1) - (1)].exp); parser_root = (yyvsp[(1) - (1)].exp); }
     break;
 
   case 3:
-#line 107 "./src/parser.y"
+#line 107 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_IntExp(LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].ival)); }
     break;
 
   case 4:
-#line 108 "./src/parser.y"
+#line 108 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_StrExp(LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].sval)); }
     break;
 
   case 5:
-#line 109 "./src/parser.y"
+#line 109 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_NilExp(LOC((yylsp[(1) - (1)]))); }
     break;
 
   case 6:
-#line 110 "./src/parser.y"
+#line 110 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_VarExp((yyvsp[(1) - (1)].lvalue)); }
     break;
 
   case 7:
-#line 111 "./src/parser.y"
+#line 111 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_AssignExp(LOC((yylsp[(2) - (3)])), (yyvsp[(1) - (3)].lvalue), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 8:
-#line 112 "./src/parser.y"
+#line 112 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_SeqExp(LOC((yylsp[(1) - (3)])), (yyvsp[(2) - (3)].expseq)); }
     break;
 
   case 9:
-#line 113 "./src/parser.y"
+#line 113 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(1) - (2)])), A_minusOp, A_IntExp(LOC((yylsp[(1) - (2)])), 0), (yyvsp[(2) - (2)].exp)); }
     break;
 
   case 10:
-#line 114 "./src/parser.y"
+#line 114 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_CallExp(LOC((yylsp[(1) - (4)])), (yyvsp[(1) - (4)].id), (yyvsp[(3) - (4)].arg_list)); }
     break;
 
   case 11:
-#line 115 "./src/parser.y"
+#line 115 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_plusOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 12:
-#line 116 "./src/parser.y"
+#line 116 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_minusOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 13:
-#line 117 "./src/parser.y"
+#line 117 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_timesOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 14:
-#line 118 "./src/parser.y"
+#line 118 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_divideOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 15:
-#line 119 "./src/parser.y"
+#line 119 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_eqOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 16:
-#line 120 "./src/parser.y"
+#line 120 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_neqOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 17:
-#line 121 "./src/parser.y"
+#line 121 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_gtOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 18:
-#line 122 "./src/parser.y"
+#line 122 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_ltOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 19:
-#line 123 "./src/parser.y"
+#line 123 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_geOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 20:
-#line 124 "./src/parser.y"
+#line 124 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_leOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 21:
-#line 125 "./src/parser.y"
+#line 125 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_andOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 22:
-#line 126 "./src/parser.y"
+#line 126 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_orOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 23:
-#line 127 "./src/parser.y"
+#line 127 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_RecordExp(LOC((yylsp[(1) - (4)])), (yyvsp[(1) - (4)].id), (yyvsp[(3) - (4)].record_list)); }
     break;
 
   case 24:
-#line 128 "./src/parser.y"
+#line 128 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_ArrayExp(LOC((yylsp[(1) - (6)])), (yyvsp[(1) - (6)].id), (yyvsp[(3) - (6)].exp), (yyvsp[(6) - (6)].exp)); }
     break;
 
   case 25:
-#line 129 "./src/parser.y"
+#line 129 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_IfExp(LOC((yylsp[(1) - (6)])), (yyvsp[(2) - (6)].exp), (yyvsp[(4) - (6)].exp), (yyvsp[(6) - (6)].exp)); }
     break;
 
   case 26:
-#line 130 "./src/parser.y"
+#line 130 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_IfExp(LOC((yylsp[(1) - (4)])), (yyvsp[(2) - (4)].exp), (yyvsp[(4) - (4)].exp), NULL); }
     break;
 
   case 27:
-#line 131 "./src/parser.y"
+#line 131 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_WhileExp(LOC((yylsp[(1) - (4)])), (yyvsp[(2) - (4)].exp), (yyvsp[(4) - (4)].exp)); }
     break;
 
   case 28:
-#line 132 "./src/parser.y"
+#line 132 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_ForExp(LOC((yylsp[(1) - (8)])), (yyvsp[(2) - (8)].id), (yyvsp[(4) - (8)].exp), (yyvsp[(6) - (8)].exp), (yyvsp[(8) - (8)].exp)); }
     break;
 
   case 29:
-#line 133 "./src/parser.y"
+#line 133 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_BreakExp(LOC((yylsp[(1) - (1)]))); }
     break;
 
   case 30:
-#line 134 "./src/parser.y"
+#line 134 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.exp) = A_LetExp(LOC((yylsp[(1) - (5)])), (yyvsp[(2) - (5)].decs), (yyvsp[(4) - (5)].expseq)); }
     break;
 
   case 31:
-#line 136 "./src/parser.y"
+#line 136 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.lvalue) = A_SimpleVar(LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].id)); }
     break;
 
   case 32:
-#line 137 "./src/parser.y"
+#line 137 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.lvalue) = A_SubscriptVar(LOC((yylsp[(1) - (4)])), A_SimpleVar(LOC((yylsp[(1) - (4)])), (yyvsp[(1) - (4)].id)), (yyvsp[(3) - (4)].exp)); }
     break;
 
   case 33:
-#line 138 "./src/parser.y"
+#line 138 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.lvalue) = A_FieldVar(LOC((yylsp[(1) - (3)])), (yyvsp[(1) - (3)].lvalue), (yyvsp[(3) - (3)].id)); }
     break;
 
   case 34:
-#line 139 "./src/parser.y"
+#line 139 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.lvalue) = A_SubscriptVar(LOC((yylsp[(1) - (4)])), (yyvsp[(1) - (4)].lvalue), (yyvsp[(3) - (4)].exp)); }
     break;
 
   case 35:
-#line 141 "./src/parser.y"
+#line 141 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.expseq) = NULL; }
     break;
 
   case 36:
-#line 142 "./src/parser.y"
+#line 142 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.expseq) = (yyvsp[(1) - (1)].expseq); }
     break;
 
   case 37:
-#line 144 "./src/parser.y"
+#line 144 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.expseq) = A_ExpSeq((yyvsp[(1) - (1)].exp), NULL); }
     break;
 
   case 38:
-#line 145 "./src/parser.y"
+#line 145 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.expseq) = A_ExpSeq((yyvsp[(3) - (3)].exp), (yyvsp[(1) - (3)].expseq)); }
     break;
 
   case 39:
-#line 147 "./src/parser.y"
+#line 147 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.arg_list) = NULL; }
     break;
 
   case 40:
-#line 148 "./src/parser.y"
+#line 148 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.arg_list) = (yyvsp[(1) - (1)].arg_list); }
     break;
 
   case 41:
-#line 150 "./src/parser.y"
+#line 150 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.arg_list) = A_ExpSeq((yyvsp[(1) - (1)].exp), NULL); }
     break;
 
   case 42:
-#line 151 "./src/parser.y"
+#line 151 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.arg_list) = A_ExpSeq((yyvsp[(3) - (3)].exp), (yyvsp[(1) - (3)].arg_list)); }
     break;
 
   case 43:
-#line 154 "./src/parser.y"
+#line 154 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.record_list) = NULL; }
     break;
 
   case 44:
-#line 155 "./src/parser.y"
+#line 155 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.record_list) = (yyvsp[(1) - (1)].record_list); }
     break;
 
   case 45:
-#line 157 "./src/parser.y"
+#line 157 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.record_list) = A_RecordList((yyvsp[(1) - (1)].record), NULL); }
     break;
 
   case 46:
-#line 158 "./src/parser.y"
+#line 158 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.record_list) = A_RecordList((yyvsp[(3) - (3)].record), (yyvsp[(1) - (3)].record_list)); }
     break;
 
   case 47:
-#line 160 "./src/parser.y"
+#line 160 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.record) = A_Record(LOC((yylsp[(1) - (3)])), (yyvsp[(1) - (3)].id), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 48:
-#line 162 "./src/parser.y"
+#line 162 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.decs) = NULL; }
     break;
 
   case 49:
-#line 163 "./src/parser.y"
+#line 163 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.decs) = A_Decs((yyvsp[(2) - (2)].dec), (yyvsp[(1) - (2)].decs)); }
     break;
 
   case 50:
-#line 165 "./src/parser.y"
+#line 165 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.dec) = (yyvsp[(1) - (1)].dec); }
     break;
 
   case 51:
-#line 166 "./src/parser.y"
+#line 166 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.dec) = (yyvsp[(1) - (1)].dec); }
     break;
 
   case 52:
-#line 167 "./src/parser.y"
+#line 167 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.dec) = (yyvsp[(1) - (1)].dec); }
     break;
 
   case 53:
-#line 169 "./src/parser.y"
+#line 169 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.dec) = A_TypeDec(LOC((yylsp[(1) - (4)])), (yyvsp[(2) - (4)].id), (yyvsp[(4) - (4)].ty)); }
     break;
 
   case 54:
-#line 171 "./src/parser.y"
+#line 171 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.ty) = A_NamedTy(LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].id)); }
     break;
 
   case 55:
-#line 172 "./src/parser.y"
+#line 172 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.ty) = A_ArrayTy(LOC((yylsp[(1) - (3)])), (yyvsp[(3) - (3)].id)); }
     break;
 
   case 56:
-#line 173 "./src/parser.y"
+#line 173 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.ty) = A_RecordTy(LOC((yylsp[(1) - (3)])), (yyvsp[(2) - (3)].tyfields)); }
     break;
 
   case 57:
-#line 175 "./src/parser.y"
+#line 175 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.tyfields) = NULL; }
     break;
 
   case 58:
-#line 176 "./src/parser.y"
+#line 176 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.tyfields) = (yyvsp[(1) - (1)].tyfields); }
     break;
 
   case 59:
-#line 178 "./src/parser.y"
+#line 178 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.tyfields) = A_TyFields((yyvsp[(1) - (1)].tyfield), NULL); }
     break;
 
   case 60:
-#line 179 "./src/parser.y"
+#line 179 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.tyfields) = A_TyFields((yyvsp[(3) - (3)].tyfield), (yyvsp[(1) - (3)].tyfields)); }
     break;
 
   case 61:
-#line 181 "./src/parser.y"
+#line 181 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.tyfield) = A_TyField(LOC((yylsp[(1) - (3)])), (yyvsp[(1) - (3)].id), (yyvsp[(3) - (3)].id)); }
     break;
 
   case 62:
-#line 183 "./src/parser.y"
+#line 183 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.dec) = A_VarDec(LOC((yylsp[(1) - (4)])), (yyvsp[(2) - (4)].id), NULL, (yyvsp[(4) - (4)].exp)); }
     break;
 
   case 63:
-#line 184 "./src/parser.y"
+#line 184 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.dec) = A_VarDec(LOC((yylsp[(1) - (6)])), (yyvsp[(2) - (6)].id), (yyvsp[(4) - (6)].id), (yyvsp[(6) - (6)].exp)); }
     break;
 
   case 64:
-#line 187 "./src/parser.y"
+#line 187 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.dec) = A_FuncDec(LOC((yylsp[(1) - (7)])), (yyvsp[(2) - (7)].id), (yyvsp[(4) - (7)].tyfields), NULL, (yyvsp[(7) - (7)].exp)); }
     break;
 
   case 65:
-#line 189 "./src/parser.y"
+#line 189 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.dec) = A_FuncDec(LOC((yylsp[(1) - (9)])), (yyvsp[(2) - (9)].id), (yyvsp[(4) - (9)].tyfields), (yyvsp[(7) - (9)].id), (yyvsp[(9) - (9)].exp)); }
     break;
 
   case 66:
-#line 191 "./src/parser.y"
+#line 191 "/Users/mangonob/Developer/ctiger/src/parser.y"
     { (yyval.id) = A_Id(LOC((yylsp[(1) - (1)])), (yyvsp[(1) - (1)].idval)); (yyloc) = (yylsp[(1) - (1)]); }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1933 "src/parser.c"
+#line 1933 "/Users/mangonob/Developer/ctiger/src/parser.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2149,7 +2149,7 @@ yyreturn:
 }
 
 
-#line 193 "./src/parser.y"
+#line 193 "/Users/mangonob/Developer/ctiger/src/parser.y"
 
 
 void yyerror(char *s) {

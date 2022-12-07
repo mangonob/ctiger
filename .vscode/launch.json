@@ -8,8 +8,8 @@
       "type": "lldb",
       "request": "launch",
       "name": "Launch",
-      "preLaunchTask": "Build Default Target",
-      "program": "${workspaceFolder}/build/a.out",
+      "preLaunchTask": "Build All Target",
+      "program": "${workspaceFolder}/build/ctiger",
       "args": [],
       "cwd": "${workspaceFolder}"
     }

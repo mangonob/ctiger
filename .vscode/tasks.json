@@ -3,8 +3,8 @@
   "tasks": [
     {
       "type": "shell",
-      "label": "Build Default Target",
-      "command": "/usr/bin/make",
+      "label": "Build All Target",
+      "command": "/usr/local/bin/cmake --build ${workspaceFolder}/build --config Debug --target all --",
       "group": "none"
     }
   ]

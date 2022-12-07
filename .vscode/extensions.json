@@ -2,6 +2,7 @@
   "recommendations": [
     "luniclynx.lex",
     "ms-vscode.cpptools",
-    "vadimcn.vscode-lldb"
+    "vadimcn.vscode-lldb",
+    "twxs.cmake"
   ]
 }

@@ -138,7 +138,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 18 "./src/parser.y"
+#line 18 "/Users/mangonob/Developer/ctiger/src/parser.y"
 {
     long ival;
     char *sval;
@@ -157,7 +157,7 @@ typedef union YYSTYPE
     A_id    id;
 }
 /* Line 1529 of yacc.c.  */
-#line 161 "src/parser.h"
+#line 161 "/Users/mangonob/Developer/ctiger/src/parser.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

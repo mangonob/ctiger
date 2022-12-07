@@ -1,6 +1,6 @@
-#line 1 "src/lexer.c"
+#line 1 "/Users/mangonob/Developer/ctiger/src/lexer.c"
 
-#line 3 "src/lexer.c"
+#line 3 "/Users/mangonob/Developer/ctiger/src/lexer.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -521,8 +521,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "./src/lexer.x"
-#line 2 "./src/lexer.x"
+#line 1 "/Users/mangonob/Developer/ctiger/src/lexer.x"
+#line 2 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 #include <stdio.h>
 #include <string.h>
 #include "absyn.h"
@@ -555,9 +555,9 @@ static int str_buffer_cursor = 0;
 void append_char(char ch) {
     str_buffer[str_buffer_cursor++] = ch;
 }
-#line 558 "src/lexer.c"
+#line 558 "/Users/mangonob/Developer/ctiger/src/lexer.c"
 
-#line 560 "src/lexer.c"
+#line 560 "/Users/mangonob/Developer/ctiger/src/lexer.c"
 
 #define INITIAL 0
 #define STR 1
@@ -786,13 +786,13 @@ YY_DECL
 		}
 
 	{
-#line 43 "./src/lexer.x"
+#line 43 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 
 
-#line 46 "./src/lexer.x"
+#line 46 "/Users/mangonob/Developer/ctiger/src/lexer.x"
     yyin = input ? input : stdin;
 
-#line 795 "src/lexer.c"
+#line 795 "/Users/mangonob/Developer/ctiger/src/lexer.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -852,38 +852,38 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 48 "./src/lexer.x"
+#line 48 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 ;
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 49 "./src/lexer.x"
+#line 49 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 ;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 50 "./src/lexer.x"
+#line 50 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 { yy_push_state(COMMENT); } /* Begin comments */
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 51 "./src/lexer.x"
+#line 51 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 { yy_pop_state(); }         /* End comments */
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 52 "./src/lexer.x"
+#line 52 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 ;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 53 "./src/lexer.x"
+#line 53 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 { str_buffer_cursor = 0; yy_push_state(STR); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 54 "./src/lexer.x"
+#line 54 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 {
                                 yy_pop_state();
                                 append_char('\0');
@@ -893,291 +893,291 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 60 "./src/lexer.x"
+#line 60 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 append_char('\a');
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 61 "./src/lexer.x"
+#line 61 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 append_char('\b');
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 62 "./src/lexer.x"
+#line 62 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 append_char('\f');
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 63 "./src/lexer.x"
+#line 63 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 append_char('\n');
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 64 "./src/lexer.x"
+#line 64 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 append_char('\r');
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 65 "./src/lexer.x"
+#line 65 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 append_char('\t');
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 66 "./src/lexer.x"
+#line 66 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 append_char('\v');
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 67 "./src/lexer.x"
+#line 67 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 append_char('\\');
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 68 "./src/lexer.x"
+#line 68 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 append_char('\'');
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 69 "./src/lexer.x"
+#line 69 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 append_char('\"');
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 70 "./src/lexer.x"
+#line 70 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 append_char('\0');
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 71 "./src/lexer.x"
+#line 71 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 append_char(yytext[0]);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 72 "./src/lexer.x"
+#line 72 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return WHILE;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 73 "./src/lexer.x"
+#line 73 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return FOR;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 74 "./src/lexer.x"
+#line 74 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return TO;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 75 "./src/lexer.x"
+#line 75 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return BREAK;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 76 "./src/lexer.x"
+#line 76 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return LET;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 77 "./src/lexer.x"
+#line 77 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return IN;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 78 "./src/lexer.x"
+#line 78 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return END;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 79 "./src/lexer.x"
+#line 79 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return FUNCTION;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 80 "./src/lexer.x"
+#line 80 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return VAR;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 81 "./src/lexer.x"
+#line 81 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return TYPE;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 82 "./src/lexer.x"
+#line 82 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return ARRAY;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 83 "./src/lexer.x"
+#line 83 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return IF;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 84 "./src/lexer.x"
+#line 84 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return THEN;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 85 "./src/lexer.x"
+#line 85 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return ELSE;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 86 "./src/lexer.x"
+#line 86 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return DO;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 87 "./src/lexer.x"
+#line 87 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return OF;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 88 "./src/lexer.x"
+#line 88 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return NIL;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 89 "./src/lexer.x"
+#line 89 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return COMMA;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 90 "./src/lexer.x"
+#line 90 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return COLON;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 91 "./src/lexer.x"
+#line 91 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return SEMICOLON;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 92 "./src/lexer.x"
+#line 92 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return LPAREN;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 93 "./src/lexer.x"
+#line 93 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return RPAREN;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 94 "./src/lexer.x"
+#line 94 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return LBRACE;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 95 "./src/lexer.x"
+#line 95 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return RBRACE;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 96 "./src/lexer.x"
+#line 96 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return LRACKET;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 97 "./src/lexer.x"
+#line 97 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return RRACKET;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 98 "./src/lexer.x"
+#line 98 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return DOT;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 99 "./src/lexer.x"
+#line 99 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return PLUS;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 100 "./src/lexer.x"
+#line 100 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return MINUS;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 101 "./src/lexer.x"
+#line 101 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return TIMES;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 102 "./src/lexer.x"
+#line 102 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return DIVIDE;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 103 "./src/lexer.x"
+#line 103 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return EQ;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 104 "./src/lexer.x"
+#line 104 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return NOTEQ;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 105 "./src/lexer.x"
+#line 105 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return LT;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 106 "./src/lexer.x"
+#line 106 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return LE;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 107 "./src/lexer.x"
+#line 107 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return GT;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 108 "./src/lexer.x"
+#line 108 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return GE;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 109 "./src/lexer.x"
+#line 109 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return AND;
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 110 "./src/lexer.x"
+#line 110 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return OR;
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 111 "./src/lexer.x"
+#line 111 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return ASSIGN;
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 112 "./src/lexer.x"
+#line 112 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 { sscanf(yytext, "%ld", &yylval.ival); return INT; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 113 "./src/lexer.x"
+#line 113 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 { yylval.idval = strdup(yytext); return ID; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 114 "./src/lexer.x"
+#line 114 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 { printf("bad token %s\n", yytext); exit(1); }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(STR):
 case YY_STATE_EOF(COMMENT):
-#line 115 "./src/lexer.x"
+#line 115 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 return EOF;
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 117 "./src/lexer.x"
+#line 117 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 ECHO;
 	YY_BREAK
-#line 1180 "src/lexer.c"
+#line 1180 "/Users/mangonob/Developer/ctiger/src/lexer.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2226,6 +2226,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 117 "./src/lexer.x"
+#line 117 "/Users/mangonob/Developer/ctiger/src/lexer.x"
 
 

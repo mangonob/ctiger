@@ -43,7 +43,7 @@ void printExp_(A_exp exp)
   switch (exp->type)
   {
   case A_intExp:
-    printf("%d", exp->int_value);
+    printf("%ld", exp->int_value);
     return;
   case A_strExp:
     printStr(exp->str);

@@ -1,6 +1,5 @@
 #ifndef ABSYNC_HEADER__
 #define ABSYNC_HEADER__
-#include <stdlib.h>
 
 /* row number and line number in source code */
 typedef struct
@@ -61,7 +60,7 @@ struct A_exp_
   union
   {
     char *str;
-    int int_value;
+    long int_value;
     A_var var;
     struct
     {
@@ -235,9 +234,7 @@ struct A_id_
   A_Pos pos;
 };
 
-void *_malloc(size_t byte);
-
-A_exp A_IntExp(A_Pos pos, int i);
+A_exp A_IntExp(A_Pos pos, long i);
 A_exp A_StrExp(A_Pos pos, char *str);
 A_exp A_NilExp(A_Pos pos);
 A_exp A_VarExp(A_var var);

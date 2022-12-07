@@ -1,9 +1,8 @@
 #include "symbol.h"
-#include "absyn.h"
+#include "utils.h"
 
-S_symbol S_Symbol(char *sym)
+S_symbol S_Symbol(string name)
 {
   S_symbol s = _malloc(sizeof(*s));
-  s->sym = sym;
   return s;
 }
