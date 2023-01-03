@@ -9,7 +9,7 @@
 
 int yylex(FILE *input);
 void yyerror(char *s);
-A_exp parser_root;
+A_exp tgroot;
 %}
 
 %locations
@@ -102,7 +102,7 @@ A_exp parser_root;
 /* Grammar follows */
 %%
 
-prog:       exp                                 { $$ = $1; parser_root = $1; }
+prog:       exp                                 { $$ = $1; tgroot = $1; }
 
 exp:        INT                                 { $$ = A_IntExp(LOC(@1), $1); }
             | STRING                            { $$ = A_StrExp(LOC(@1), $1); }

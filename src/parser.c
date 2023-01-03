@@ -176,7 +176,7 @@
 
 int yylex(FILE *input);
 void yyerror(char *s);
-A_exp parser_root;
+A_exp tgroot;
 
 
 /* Enabling traces.  */
@@ -1604,7 +1604,7 @@ yyreduce:
     {
         case 2:
 #line 105 "/Users/mangonob/Developer/ctiger/src/parser.y"
-    { (yyval.exp) = (yyvsp[(1) - (1)].exp); parser_root = (yyvsp[(1) - (1)].exp); }
+    { (yyval.exp) = (yyvsp[(1) - (1)].exp); tgroot = (yyvsp[(1) - (1)].exp); }
     break;
 
   case 3:

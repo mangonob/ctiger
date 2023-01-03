@@ -8,9 +8,9 @@ file(GLOB_RECURSE SOURCES "src/*.c")
 
 set(SRC ${CMAKE_SOURCE_DIR}/src)
 
-add_executable(ctiger ${SOURCES})
+add_executable(tigerc ${SOURCES})
 
-install(TARGETS ctiger DESTINATION bin)
+install(TARGETS tigerc DESTINATION bin)
 
 add_custom_command(
   OUTPUT ${SRC}/parser.c

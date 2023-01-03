@@ -5,7 +5,7 @@
 #include "print_absyn.h"
 
 extern int yyparse(FILE *input);
-extern A_exp parser_root;
+extern A_exp tgroot;
 
 void usage();
 void parse_wrap(FILE *input);
@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
   else
   {
     usage();
-    exit(0);
   }
 
   exit(0);
@@ -41,10 +40,11 @@ void parse_wrap(FILE *input)
 {
   if (yyparse(input))
     exit(1);
-  printExp(parser_root);
+  printExp(tgroot);
 }
 
 void usage()
 {
-  printf("usage: tiger filename\n");
+  printf("usage: tigerc filename\n");
+  exit(0);
 }
