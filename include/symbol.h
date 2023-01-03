@@ -11,7 +11,7 @@ struct S_symbol_
   S_symbol next;
 };
 
-#define SYMBOL_TABLE_SIZE 109
-static S_symbol symbol_hash_table[SYMBOL_TABLE_SIZE];
+S_symbol S_Symbol(string);
+string S_name(S_symbol);
 
 #endif

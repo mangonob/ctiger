@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
   else
   {
     usage();
-    exit(0);
   }
 
   exit(0);
@@ -47,4 +46,5 @@ void parse_wrap(FILE *input)
 void usage()
 {
   printf("usage: tiger filename\n");
+  exit(0);
 }
