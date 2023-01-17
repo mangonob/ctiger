@@ -91,7 +91,7 @@ A_exp tgroot;
 %type <expseq> expseq expseq_
 %type <arg_list> arg_list arg_list_
 %type <record_list> record_list record_list_
-%type <decs> decs
+%type <decs> decs decs_
 %type <dec> dec typedec vardec funcdec
 %type <ty> ty
 %type <tyfields> tyfields tyfields_
@@ -139,28 +139,30 @@ lvalue:     id %prec LVALUE                     { $$ = A_SimpleVar(LOC(@1), $1);
             | lvalue "[" exp "]"                { $$ = A_SubscriptVar(LOC(@1), $1, $3); }
 
 expseq:     /* empty */                         { $$ = NULL; }
-            | expseq_                           { $$ = $1; }
+            | expseq_                           { $$ = A_ExpSeqReverse($1); }
 
 expseq_:    exp                                 { $$ = A_ExpSeq($1, NULL); }
             | expseq_ ";" exp                   { $$ = A_ExpSeq($3, $1); }
 
 arg_list:   /* empty */                         { $$ = NULL; }
-            | arg_list_                         { $$ = $1; }
+            | arg_list_                         { $$ = A_ExpSeqReverse($1); }
 
 arg_list_:  exp                                 { $$ = A_ExpSeq($1, NULL); }
             | arg_list_ "," exp                 { $$ = A_ExpSeq($3, $1); }
 
 
 record_list:    /* empty */                     { $$ = NULL; }
-            | record_list_                      { $$ = $1; }
+            | record_list_                      { $$ = A_RecordListReverse($1); }
 
 record_list_:   record                          { $$ = A_RecordList($1, NULL); }
             | record_list_ "," record           { $$ = A_RecordList($3, $1); }
 
 record:     id "=" exp                          { $$ = A_Record(LOC(@1), $1, $3); }
 
-decs:       /* empty */                         { $$ = NULL; }
-            | decs dec                          { $$ = A_Decs($2, $1); }
+decs:       decs_                               { $$ = A_DecsReverse($1); }
+
+decs_:      /* empty */                         { $$ = NULL; }
+            | decs_ dec                         { $$ = A_Decs($2, $1); }
 
 dec:        typedec                             { $$ = $1; }
             | vardec                            { $$ = $1; }
@@ -173,7 +175,7 @@ ty:         id                                  { $$ = A_NamedTy(LOC(@1), $1); }
             | "{" tyfields "}"                  { $$ = A_RecordTy(LOC(@1), $2); }
 
 tyfields:   /* empty */                         { $$ = NULL; }
-            | tyfields_                         { $$ = $1; }
+            | tyfields_                         { $$ = A_TyFieldsReverse($1); }
 
 tyfields_:  tyfield                             { $$ = A_TyFields($1, NULL); }
             | tyfields_ "," tyfield             { $$ = A_TyFields($3, $1); }
@@ -188,7 +190,7 @@ funcdec:    "function" id "(" tyfields ")" "=" exp
             | "function" id "(" tyfields ")" ":" id "=" exp
                                                 { $$ = A_FuncDec(LOC(@1), $2, $4, $7, $9); }
 
-id:         ID                                  { $$ = A_Id(LOC(@1), $1); @$ = @1; }
+id:         ID                                  { $$ = A_Id(LOC(@1), S_Symbol($1)); @$ = @1; }
 
 %%
 

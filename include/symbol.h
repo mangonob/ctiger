@@ -1,6 +1,6 @@
 #ifndef SYMBOL_HEADER__
 #define SYMBOL_HEADER__
-#include <table.h>
+#include "table.h"
 
 typedef char *string;
 
@@ -19,6 +19,8 @@ S_symbol S_Symbol(string);
 static S_symbol mkSymbol(string name, S_symbol next);
 
 S_symbol S_Symbol(string name);
+
+string S_name(S_symbol sym);
 
 S_table S_empty();
 

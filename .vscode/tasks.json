@@ -4,7 +4,7 @@
     {
       "type": "shell",
       "label": "Build All Target",
-      "command": "/usr/local/bin/cmake --build ${workspaceFolder}/build --config Debug --target all --",
+      "command": "cmake --build ${workspaceFolder}/build --config Debug --target all --",
       "group": "none"
     }
   ]

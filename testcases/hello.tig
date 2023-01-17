@@ -1,0 +1,10 @@
+let
+  var c: int := 42
+  function bar(): int = fooBar()
+  function fooBar(): int = 42
+  var bbb: int := bar()
+  type b = array of b
+  type ccc = {a: int, b: ccc}
+in
+  ccc { a = 42 , b = nil , b = nil }
+end

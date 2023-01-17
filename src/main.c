@@ -3,6 +3,9 @@
 #include "absyn.h"
 #include "parser.h"
 #include "print_absyn.h"
+#include "semant.h"
+#include "env.h"
+#include "types.h"
 
 extern int yyparse(FILE *input);
 extern A_exp tgroot;
@@ -40,7 +43,10 @@ void parse_wrap(FILE *input)
 {
   if (yyparse(input))
     exit(1);
-  printExp(tgroot);
+
+  expty exp = transExp(E_base_venv(), E_base_tenv(), tgroot);
+  fprintTy(stdout, exp.ty);
+  puts("");
 }
 
 void usage()

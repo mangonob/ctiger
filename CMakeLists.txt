@@ -2,11 +2,13 @@ cmake_minimum_required(VERSION 3.23)
 
 project(ctiger)
 
+set(CMAKE_C_STANDARD 11)
+
 include_directories("./include")
 
-file(GLOB_RECURSE SOURCES "src/*.c")
-
 set(SRC ${CMAKE_SOURCE_DIR}/src)
+
+file(GLOB_RECURSE SOURCES ${SRC}/*.c)
 
 add_executable(tigerc ${SOURCES})
 

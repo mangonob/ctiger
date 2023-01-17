@@ -1,6 +1,6 @@
 #ifndef UTILS_HEADER__
 #define UTILS_HEADER__
-#include <stdlib.h>
+#include <stddef.h>
 
 void *_malloc(size_t byte);
 

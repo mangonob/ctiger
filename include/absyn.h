@@ -1,5 +1,6 @@
 #ifndef ABSYNC_HEADER__
 #define ABSYNC_HEADER__
+#include "symbol.h"
 
 /* row number and line number in source code */
 typedef struct
@@ -230,7 +231,7 @@ struct A_tyfields_
 
 struct A_id_
 {
-  char *id;
+  S_symbol id;
   A_Pos pos;
 };
 
@@ -253,8 +254,10 @@ A_var A_SimpleVar(A_Pos pos, A_id name);
 A_var A_FieldVar(A_Pos pos, A_var var, A_id name);
 A_var A_SubscriptVar(A_Pos pos, A_var var, A_exp exp);
 A_expseq A_ExpSeq(A_exp head, A_expseq tail);
+A_expseq A_ExpSeqReverse(A_expseq seq);
 A_record A_Record(A_Pos pos, A_id name, A_exp value);
 A_record_list A_RecordList(A_record head, A_record_list tail);
+A_record_list A_RecordListReverse(A_record_list list);
 A_dec A_FuncDec(A_Pos pos, A_id name, A_tyfields parameters, A_id return_type, A_exp init);
 A_dec A_TypeDec(A_Pos pos, A_id type_id, A_ty ty);
 A_dec A_VarDec(A_Pos pos, A_id var, A_id type_id, A_exp exp);
@@ -262,8 +265,10 @@ A_ty A_NamedTy(A_Pos pos, A_id named);
 A_ty A_ArrayTy(A_Pos pos, A_id array);
 A_ty A_RecordTy(A_Pos pos, A_tyfields fields);
 A_decs A_Decs(A_dec head, A_decs tail);
+A_decs A_DecsReverse(A_decs decs);
 A_tyfields A_TyFields(A_tyfield head, A_tyfields tail);
+A_tyfields A_TyFieldsReverse(A_tyfields tyfields);
 A_tyfield A_TyField(A_Pos pos, A_id name, A_id type_id);
-A_id A_Id(A_Pos pos, char *id);
+A_id A_Id(A_Pos pos, S_symbol id);
 
 #endif

@@ -186,6 +186,16 @@ A_expseq A_ExpSeq(A_exp head, A_expseq tail)
   return p;
 }
 
+A_expseq A_ExpSeqReverse(A_expseq seq)
+{
+  A_expseq r = NULL;
+
+  for (; seq && seq->head; seq = seq->tail)
+    r = A_ExpSeq(seq->head, r);
+
+  return r;
+}
+
 A_record A_Record(A_Pos pos, A_id name, A_exp value)
 {
   A_record p = _malloc(sizeof(*p));
@@ -201,6 +211,16 @@ A_record_list A_RecordList(A_record head, A_record_list tail)
   p->head = head;
   p->tail = tail;
   return p;
+}
+
+A_record_list A_RecordListReverse(A_record_list list)
+{
+  A_record_list r = NULL;
+
+  for (; list && list->head; list = list->tail)
+    r = A_RecordList(list->head, r);
+
+  return r;
 }
 
 A_dec A_FuncDec(A_Pos pos, A_id name, A_tyfields parameters, A_id return_type, A_exp init)
@@ -219,6 +239,7 @@ A_dec A_TypeDec(A_Pos pos, A_id type_id, A_ty ty)
 {
   A_dec p = _malloc(sizeof(*p));
   p->type = A_typeDec;
+  p->pos = pos;
   p->typedec.type_id = type_id;
   p->typedec.ty = ty;
   return p;
@@ -228,6 +249,7 @@ A_dec A_VarDec(A_Pos pos, A_id var, A_id type_id, A_exp exp)
 {
   A_dec p = _malloc(sizeof(*p));
   p->type = A_varDec;
+  p->pos = pos;
   p->vardec.var = var;
   p->vardec.type_id = type_id;
   p->vardec.exp = exp;
@@ -237,6 +259,7 @@ A_dec A_VarDec(A_Pos pos, A_id var, A_id type_id, A_exp exp)
 A_ty A_NamedTy(A_Pos pos, A_id named)
 {
   A_ty p = _malloc(sizeof(*p));
+  p->pos = pos;
   p->type = A_namedTy;
   p->named = named;
   return p;
@@ -245,6 +268,7 @@ A_ty A_NamedTy(A_Pos pos, A_id named)
 A_ty A_ArrayTy(A_Pos pos, A_id array)
 {
   A_ty p = _malloc(sizeof(*p));
+  p->pos = pos;
   p->type = A_arrayTy;
   p->array = array;
   return p;
@@ -253,6 +277,7 @@ A_ty A_ArrayTy(A_Pos pos, A_id array)
 A_ty A_RecordTy(A_Pos pos, A_tyfields fields)
 {
   A_ty p = _malloc(sizeof(*p));
+  p->pos = pos;
   p->type = A_recordTy;
   p->fields = fields;
   return p;
@@ -266,12 +291,32 @@ A_decs A_Decs(A_dec head, A_decs tail)
   return p;
 }
 
+A_decs A_DecsReverse(A_decs decs)
+{
+  A_decs r = NULL;
+
+  for (; decs && decs->head; decs = decs->tail)
+    r = A_Decs(decs->head, r);
+
+  return r;
+}
+
 A_tyfields A_TyFields(A_tyfield head, A_tyfields tail)
 {
   A_tyfields p = _malloc(sizeof(*p));
   p->head = head;
   p->tail = tail;
   return p;
+}
+
+A_tyfields A_TyFieldsReverse(A_tyfields tyfields)
+{
+  A_tyfields r = NULL;
+
+  for (; tyfields && tyfields->head; tyfields = tyfields->tail)
+    r = A_TyFields(tyfields->head, r);
+
+  return r;
 }
 
 A_tyfield A_TyField(A_Pos pos, A_id name, A_id type_id)
@@ -283,7 +328,7 @@ A_tyfield A_TyField(A_Pos pos, A_id name, A_id type_id)
   return p;
 }
 
-A_id A_Id(A_Pos pos, char *id)
+A_id A_Id(A_Pos pos, S_symbol id)
 {
   A_id p = _malloc(sizeof(*p));
   p->pos = pos;

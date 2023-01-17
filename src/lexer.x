@@ -49,6 +49,7 @@ ID          [a-zA-Z_][a-zA-Z0-9_]*
 <INITIAL,COMMENT>\/\*       { yy_push_state(COMMENT); } /* Begin comments */
 <COMMENT>"*/"               { yy_pop_state(); }         /* End comments */
 <COMMENT>.                  ;
+<COMMENT>[ \t\n]            ;
 \"                          { str_buffer_cursor = 0; yy_push_state(STR); }
 <STR>\"                     {
                                 yy_pop_state();

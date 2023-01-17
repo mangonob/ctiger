@@ -4,7 +4,6 @@
 #include "print_absyn.h"
 
 void printExp_(A_exp exp);
-void printIndent(int indent);
 void printVar(A_var var);
 void printDecs(A_decs decs);
 void printDec(A_dec dec);
@@ -69,7 +68,7 @@ void printExp_(A_exp exp)
     printf(")");
     break;
   case A_callExp:
-    printf("%s(", exp->call.func->id);
+    printf("%s(", exp->call.func->id->name);
     useinline();
     printArgList(exp->call.args);
     uninline();
@@ -83,7 +82,7 @@ void printExp_(A_exp exp)
     printExp_(exp->op.rhs);
     break;
   case A_recordExp:
-    printf("%s {", exp->record.type_id->id);
+    printf("%s {", exp->record.type_id->id->name);
     if (exp->record.record_list)
     {
       printf(" ");
@@ -93,7 +92,7 @@ void printExp_(A_exp exp)
     printf("}");
     break;
   case A_arrayExp:
-    printf("%s [ ", exp->array.type_id->id);
+    printf("%s [ ", exp->array.type_id->id->name);
     printExp_(exp->array.capcity);
     printf(" ] of ");
     printExp_(exp->array.element);
@@ -128,7 +127,7 @@ void printExp_(A_exp exp)
     unindent();
     break;
   case A_forExp:;
-    printf("for %s := ", exp->forr.var->id);
+    printf("for %s := ", exp->forr.var->id->name);
     printExp_(exp->forr.from);
     printf(" to ");
     printExp_(exp->forr.to);
@@ -173,11 +172,11 @@ void printVar(A_var var)
   switch (var->type)
   {
   case A_simpleVar:
-    printf("%s", var->simple->id);
+    printf("%s", var->simple->id->name);
     break;
   case A_fieldVar:
     printVar(var->field.var);
-    printf(".%s", var->field.sym->id);
+    printf(".%s", var->field.sym->id->name);
     break;
   case A_subscriptVar:
     printVar(var->subscript.var);
@@ -193,14 +192,14 @@ void printDecs(A_decs decs)
   if (!decs)
     return;
 
-  if (decs->tail)
-  {
-    printDecs(decs->tail);
-    changeLine();
-  }
-
   if (decs->head)
     printDec(decs->head);
+
+  if (decs->tail)
+  {
+    changeLine();
+    printDecs(decs->tail);
+  }
 }
 
 void printDec(A_dec dec)
@@ -208,23 +207,23 @@ void printDec(A_dec dec)
   switch (dec->type)
   {
   case A_typeDec:
-    printf("type %s = ", dec->typedec.type_id->id);
+    printf("type %s = ", dec->typedec.type_id->id->name);
     printTy(dec->typedec.ty);
     break;
   case A_varDec:
-    printf("var %s ", dec->vardec.var->id);
+    printf("var %s ", dec->vardec.var->id->name);
     if (dec->vardec.type_id)
-      printf(": %s ", dec->vardec.type_id->id);
+      printf(": %s ", dec->vardec.type_id->id->name);
     printf(":= ");
     printExp_(dec->vardec.exp);
     break;
   case A_funcDec:
-    printf("function %s(", dec->funcdec.funcname->id);
+    printf("function %s(", dec->funcdec.funcname->id->name);
     printTyFields(dec->funcdec.parameters);
     printf(") ");
     if (dec->funcdec.return_type)
     {
-      printf(": %s ", dec->funcdec.return_type->id);
+      printf(": %s ", dec->funcdec.return_type->id->name);
     }
     printf("=");
     if (is_exp_verbose(dec->funcdec.init))
@@ -248,19 +247,19 @@ void printTyFields(A_tyfields fields)
   if (!fields)
     return;
 
-  if (fields->tail)
-  {
-    printTyFields(fields->tail);
-    printf(", ");
-  }
-
   if (fields->head)
     printTyField(fields->head);
+
+  if (fields->tail)
+  {
+    printf(", ");
+    printTyFields(fields->tail);
+  }
 }
 
 void printTyField(A_tyfield field)
 {
-  printf("%s : %s", field->name->id, field->type_id->id);
+  printf("%s : %s", field->name->id->name, field->type_id->id->name);
 }
 
 void printTy(A_ty ty)
@@ -268,10 +267,10 @@ void printTy(A_ty ty)
   switch (ty->type)
   {
   case A_namedTy:
-    printf("%s", ty->named->id);
+    printf("%s", ty->named->id->name);
     break;
   case A_arrayTy:
-    printf("array of %s", ty->array->id);
+    printf("array of %s", ty->array->id->name);
     break;
   case A_recordTy:
     printf("{");
@@ -286,15 +285,15 @@ void printExpSeq(A_expseq expseq)
   if (!expseq)
     return;
 
-  if (expseq->tail)
-  {
-    printExpSeq(expseq->tail);
-    printf(";");
-    changeLine();
-  }
-
   if (expseq->head)
     printExp_(expseq->head);
+
+  if (expseq->tail)
+  {
+    printf(";");
+    changeLine();
+    printExpSeq(expseq->tail);
+  }
 }
 
 void printArgList(A_expseq expseq)
@@ -302,14 +301,14 @@ void printArgList(A_expseq expseq)
   if (!expseq)
     return;
 
-  if (expseq->tail)
-  {
-    printExpSeq(expseq->tail);
-    printf(", ");
-  }
-
   if (expseq->head)
     printExp_(expseq->head);
+
+  if (expseq->tail)
+  {
+    printf(", ");
+    printArgList(expseq->tail);
+  }
 }
 
 void printRecordList(A_record_list records)
@@ -317,19 +316,19 @@ void printRecordList(A_record_list records)
   if (!records)
     return;
 
-  if (records->tail)
-  {
-    printRecordList(records->tail);
-    printf(", ");
-  }
-
   if (records->head)
     printRecord(records->head);
+
+  if (records->tail)
+  {
+    printf(", ");
+    printRecordList(records->tail);
+  }
 }
 
 void printRecord(A_record record)
 {
-  printf("%s = ", record->name->id);
+  printf("%s = ", record->name->id->name);
   printExp_(record->value);
 }
 

@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch",
       "preLaunchTask": "Build All Target",
-      "program": "${workspaceFolder}/build/ctiger",
+      "program": "${workspaceFolder}/build/tigerc",
       "args": [],
       "cwd": "${workspaceFolder}"
     }
