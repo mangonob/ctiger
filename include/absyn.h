@@ -33,8 +33,6 @@ typedef enum
   A_leOp,
   A_gtOp,
   A_geOp,
-  A_andOp,
-  A_orOp,
 } A_oper;
 
 struct A_exp_

@@ -366,12 +366,6 @@ void printOper(A_oper oper)
   case A_geOp:
     printf("<=");
     break;
-  case A_andOp:
-    printf("&");
-    break;
-  case A_orOp:
-    printf("|");
-    break;
   }
 }
 

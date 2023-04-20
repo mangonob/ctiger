@@ -88,14 +88,6 @@ expty transExp(S_table venv, S_table tenv, A_exp exp)
     case A_minusOp:
     case A_timesOp:
     case A_divideOp:
-    case A_andOp:
-    case A_orOp:
-    {
-      if (checkType(lhs.ty, Ty_Int()) && checkType(rhs.ty, Ty_Int()))
-        return expTy(NULL, Ty_Int());
-      else
-        SM_Error(exp->op.lhs->pos, "except int type");
-    }
     case A_eqOp:
     case A_neqOp:
     {

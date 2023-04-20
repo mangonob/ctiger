@@ -1702,12 +1702,12 @@ yyreduce:
 
   case 21:
 #line 125 "/Users/mangonob/Developer/ctiger/src/parser.y"
-    { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_andOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
+    { (yyval.exp) = A_IfExp(LOC((yylsp[(2) - (3)])), (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp), A_IntExp(LOC((yylsp[(3) - (3)])), 0)); }
     break;
 
   case 22:
 #line 126 "/Users/mangonob/Developer/ctiger/src/parser.y"
-    { (yyval.exp) = A_OpExp(LOC((yylsp[(2) - (3)])), A_orOp, (yyvsp[(1) - (3)].exp), (yyvsp[(3) - (3)].exp)); }
+    { (yyval.exp) = A_IfExp(LOC((yylsp[(2) - (3)])), (yyvsp[(1) - (3)].exp), A_IntExp(LOC((yylsp[(3) - (3)])), 1), (yyvsp[(3) - (3)].exp)); }
     break;
 
   case 23:

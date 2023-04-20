@@ -122,8 +122,8 @@ exp:        INT                                 { $$ = A_IntExp(LOC(@1), $1); }
             | exp "<" exp                       { $$ = A_OpExp(LOC(@2), A_ltOp, $1, $3); }
             | exp ">=" exp                      { $$ = A_OpExp(LOC(@2), A_geOp, $1, $3); }
             | exp "<=" exp                      { $$ = A_OpExp(LOC(@2), A_leOp, $1, $3); }
-            | exp "&" exp                       { $$ = A_OpExp(LOC(@2), A_andOp, $1, $3); }
-            | exp "|" exp                       { $$ = A_OpExp(LOC(@2), A_orOp, $1, $3); }
+            | exp "&" exp                       { $$ = A_IfExp(LOC(@2), $1, $3, A_IntExp(LOC(@3), 0)); }
+            | exp "|" exp                       { $$ = A_IfExp(LOC(@2), $1, A_IntExp(LOC(@3), 1), $3); }
             | id "{" record_list "}"            { $$ = A_RecordExp(LOC(@1), $1, $3); }
             | id "[" exp "]" "of" exp           { $$ = A_ArrayExp(LOC(@1), $1, $3, $6); }
             | IF exp THEN exp ELSE exp          { $$ = A_IfExp(LOC(@1), $2, $4, $6); }
