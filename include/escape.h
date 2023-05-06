@@ -11,6 +11,7 @@ struct Esc_escapeEntry_
   int depth;
   bool *escape;
 };
+
 Esc_escapeEntry Esc_EscapeEntry(int depth, bool *escape);
 
 #endif
