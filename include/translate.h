@@ -36,7 +36,7 @@ struct patchList_
   patchList tail;
 };
 
-static patchList PatchList(Temp_label head, patchList tail);
+static patchList PatchList(Temp_label *head, patchList tail);
 
 static Tr_exp Tr_Ex(T_exp ex);
 static Tr_exp Tr_Nx(T_stm nx);

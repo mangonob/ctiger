@@ -63,8 +63,8 @@ struct T_stm_
     {
       T_relOp op;
       T_exp lhs, rhs;
-      Temp_label label1;
-      Temp_label label2;
+      Temp_label trueLabel;
+      Temp_label falseLabel;
     } CJUMP;
     struct
     {

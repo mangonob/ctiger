@@ -46,11 +46,10 @@ static T_exp unEx(Tr_exp e)
     Temp_temp r = Temp_newtemp();
     Temp_label t = Temp_newLabel();
     Temp_label f = Temp_newLabel();
-    struct Cx cx = e->cx;
-    doPatch(cx.trues, t);
-    doPatch(cx.falses, f);
+    doPatch(e->cx.trues, t);
+    doPatch(e->cx.falses, f);
     return T_Eseq(T_Move(T_Temp(r), T_Const(1)),
-                  T_Eseq(cx.stm,
+                  T_Eseq(e->cx.stm,
                          T_Eseq(T_Label(f),
                                 T_Eseq(T_Move(T_Temp(r), T_Const(0)),
                                        T_Eseq(T_Label(t), T_Temp(r))))));
@@ -62,12 +61,44 @@ static T_exp unEx(Tr_exp e)
 
 static T_stm unNx(Tr_exp e)
 {
-  // TODO
-  notImplementation();
+  switch (e->kind)
+  {
+  case Tr_ex:
+    return T_Exp(e->ex);
+  case Tr_cx:
+  {
+    Temp_label t = Temp_newLabel();
+    Temp_label f = Temp_newLabel();
+    doPatch(e->cx.trues, t);
+    doPatch(e->cx.falses, f);
+    return T_Seq(e->cx.stm, T_Seq(T_Label(t), T_Label(f)));
+  }
+  case Tr_nx:
+    return e->nx;
+  }
 }
 
 static struct Cx unCx(Tr_exp e)
 {
-  // TODO
-  notImplementation();
+  switch (e->kind)
+  {
+  case Tr_ex:
+  {
+    struct Cx cx;
+    cx.stm = T_Cjump(T_ne, e->ex, T_Const(0), NULL, NULL);
+    cx.trues = PatchList(&cx.stm->CJUMP.trueLabel, NULL);
+    cx.falses = PatchList(&cx.stm->CJUMP.falseLabel, NULL);
+    return cx;
+  }
+  case Tr_cx:
+    return e->cx;
+  case Tr_nx:
+  {
+    struct Cx cx;
+    cx.stm = e->nx;
+    cx.trues = NULL;
+    cx.falses = NULL;
+    return cx;
+  }
+  }
 }
