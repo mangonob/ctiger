@@ -48,11 +48,21 @@ static T_exp unEx(Tr_exp e)
     Temp_label f = Temp_newLabel();
     doPatch(e->cx.trues, t);
     doPatch(e->cx.falses, f);
-    return T_Eseq(T_Move(T_Temp(r), T_Const(1)),
-                  T_Eseq(e->cx.stm,
-                         T_Eseq(T_Label(f),
-                                T_Eseq(T_Move(T_Temp(r), T_Const(0)),
-                                       T_Eseq(T_Label(t), T_Temp(r))))));
+
+    // return T_Eseq(T_Move(T_Temp(r), T_Const(1)),
+    //               T_Eseq(e->cx.stm,
+    //                      T_Eseq(T_Label(f),
+    //                             T_Eseq(T_Move(T_Temp(r), T_Const(0)),
+    //                                    T_Eseq(T_Label(t), T_Temp(r))))));
+
+    return vT_Eseq(
+        T_Move(T_Temp(r), T_Const(1)),
+        e->cx.stm,
+        T_Label(f),
+        T_Move(T_Temp(r), T_Const(0)),
+        T_Label(t),
+        T_Temp(r),
+        0);
   }
   case Tr_nx:
     return T_Eseq(e->nx, T_Const(0));
@@ -101,4 +111,12 @@ static struct Cx unCx(Tr_exp e)
     return cx;
   }
   }
+}
+
+static patchList PatchList(Temp_label *head, patchList tail)
+{
+  patchList p = _malloc(sizeof(p));
+  p->head = head;
+  p->tail = tail;
+  return p;
 }

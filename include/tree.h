@@ -134,6 +134,7 @@ T_expList T_ExpList(T_exp head, T_expList tail);
 T_stmList T_StmList(T_stm head, T_stmList tail);
 
 T_stm T_Seq(T_stm left, T_stm right);
+T_stm vT_Seq(T_stm stm, ...);
 T_stm T_Label(Temp_label);
 T_stm T_Jump(T_exp exp, Temp_labelList labels);
 T_stm T_Cjump(T_relOp op, T_exp lhs, T_exp rhs, Temp_label label1, Temp_label label2);
@@ -144,9 +145,10 @@ T_exp T_Binop(T_binOp, T_exp, T_exp);
 T_exp T_Mem(T_exp);
 T_exp T_Temp(Temp_temp);
 T_exp T_Eseq(T_stm, T_exp);
+T_exp vT_Eseq(T_stm stm, ...);
 T_exp T_Name(Temp_label);
 T_exp T_Const(int);
-T_exp T_Call(T_exp, T_expList);
+T_exp T_Call(T_exp fun, T_expList args);
 
 T_relOp T_notRel(T_relOp);  /* a op b    ==     not(a notRel(op) b)  */
 T_relOp T_commute(T_relOp); /* a op b    ==    b commute(op) a       */
