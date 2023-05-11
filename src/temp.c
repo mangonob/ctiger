@@ -4,11 +4,6 @@
 #include "table.h"
 #include "utils.h"
 
-struct Temp_temp_
-{
-  int num;
-};
-
 struct Temp_map_
 {
   TAB_table tab;

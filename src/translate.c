@@ -1,6 +1,7 @@
 #include "translate.h"
 #include "utils.h"
 #include "temp.h"
+#include "print_tree.h"
 
 static Tr_exp Tr_Ex(T_exp ex)
 {
@@ -115,8 +116,13 @@ static struct Cx unCx(Tr_exp e)
 
 static patchList PatchList(Temp_label *head, patchList tail)
 {
-  patchList p = _malloc(sizeof(p));
+  patchList p = _malloc(sizeof(*p));
   p->head = head;
   p->tail = tail;
   return p;
+}
+
+void Tr_printTree(Tr_exp exp)
+{
+  printStmList(T_StmList(unNx(exp), NULL), 0);
 }

@@ -46,4 +46,6 @@ static T_exp unEx(Tr_exp e);
 static T_stm unNx(Tr_exp e);
 static struct Cx unCx(Tr_exp e);
 
+void Tr_printTree(Tr_exp exp);
+
 #endif

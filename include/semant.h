@@ -3,8 +3,7 @@
 
 #include "types.h"
 #include "absyn.h"
-
-typedef void *Tr_exp;
+#include "translate.h"
 
 struct expty
 {

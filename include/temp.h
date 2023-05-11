@@ -4,6 +4,11 @@
 #include "symbol.h"
 
 typedef struct Temp_temp_ *Temp_temp;
+struct Temp_temp_
+{
+  int num;
+};
+
 Temp_temp Temp_newtemp();
 
 typedef struct Temp_tempList_ *Temp_tempList;

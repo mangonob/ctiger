@@ -20,7 +20,7 @@ F_accessList F_formals(F_frame f)
 
 static F_access InFrame(int offset)
 {
-  F_access p = _malloc(sizeof(p));
+  F_access p = _malloc(sizeof(*p));
   p->kind = inFrame;
   p->offset = offset;
   return p;
@@ -28,7 +28,7 @@ static F_access InFrame(int offset)
 
 static F_access InReg(Temp_temp reg)
 {
-  F_access p = _malloc(sizeof(p));
+  F_access p = _malloc(sizeof(*p));
   p->kind = inReg;
   p->reg = reg;
   return p;
