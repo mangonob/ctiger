@@ -137,7 +137,7 @@ T_stm T_Seq(T_stm left, T_stm right);
 T_stm vT_Seq(T_stm stm, ...);
 T_stm T_Label(Temp_label label);
 T_stm T_Jump(T_exp exp, Temp_labelList labels);
-T_stm T_Cjump(T_relOp op, T_exp lhs, T_exp rhs, Temp_label label1, Temp_label label2);
+T_stm T_Cjump(T_relOp op, T_exp lhs, T_exp rhs, Temp_label trueLabel, Temp_label falseLabel);
 T_stm T_Move(T_exp dst, T_exp src);
 T_stm T_Exp(T_exp);
 

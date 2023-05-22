@@ -65,15 +65,15 @@ T_stm T_Jump(T_exp exp, Temp_labelList labels)
   return p;
 }
 
-T_stm T_Cjump(T_relOp op, T_exp lhs, T_exp rhs, Temp_label label1, Temp_label label2)
+T_stm T_Cjump(T_relOp op, T_exp lhs, T_exp rhs, Temp_label trueLabel, Temp_label falseLabel)
 {
   T_stm p = _malloc(sizeof(*p));
   p->kind = T_CJUMP;
   p->CJUMP.op = op;
   p->CJUMP.lhs = lhs;
   p->CJUMP.rhs = rhs;
-  p->CJUMP.trueLabel = label1;
-  p->CJUMP.falseLabel = label2;
+  p->CJUMP.trueLabel = trueLabel;
+  p->CJUMP.falseLabel = falseLabel;
   return p;
 }
 
