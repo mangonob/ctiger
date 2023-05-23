@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include "print_tree.h"
-#define changeLineIfNeeded() \
-  do                         \
-  {                          \
-    if (!depth)              \
-      printf("\n");          \
+#define changeLineIfNeeded(depth) \
+  do                              \
+  {                               \
+    if (!depth)                   \
+      printf("\n");               \
   } while (0);
 
 void printStmList(T_stmList stms, int depth);
@@ -22,17 +22,17 @@ void printTreeExp(T_exp exp, int depth)
     printf(", ");
     printTreeExp(exp->BINOP.right, depth + 1);
     printf(")");
-    changeLineIfNeeded();
+    changeLineIfNeeded(depth);
     break;
   case T_MEM:
     printf("MEM(");
     printTreeExp(exp->MEM, depth + 1);
     printf(")");
-    changeLineIfNeeded();
+    changeLineIfNeeded(depth);
     break;
   case T_TEMP:
     printf("TEMP(t%d)", exp->TEMP->num);
-    changeLineIfNeeded();
+    changeLineIfNeeded(depth);
     break;
   case T_ESEQ:
     printStm(exp->ESEQ.stm, depth);
@@ -40,11 +40,11 @@ void printTreeExp(T_exp exp, int depth)
     break;
   case T_NAME:
     printf("NAME(%s)", exp->NAME->name);
-    changeLineIfNeeded();
+    changeLineIfNeeded(depth);
     break;
   case T_CONST:
     printf("CONST(%d)", exp->CONST);
-    changeLineIfNeeded();
+    changeLineIfNeeded(depth);
     break;
   case T_CALL:
     printf("CALL(");
@@ -56,7 +56,7 @@ void printTreeExp(T_exp exp, int depth)
       printTreeExp(exps->head, depth + 1);
     }
     printf(")");
-    changeLineIfNeeded();
+    changeLineIfNeeded(depth);
     break;
   }
 }
@@ -80,13 +80,13 @@ void printStm(T_stm stm, int depth)
     break;
   case T_LABEL:
     printf("LABEL(%s)", stm->LABEL->name);
-    changeLineIfNeeded();
+    changeLineIfNeeded(depth);
     break;
   case T_JUMP:
   {
     printf("JUMP(");
     printTreeExp(stm->JUMP.exp, depth + 1);
-    printf(", [");
+    printf(" -> ");
 
     Temp_labelList labels = stm->JUMP.jumps;
     for (; labels && labels->head; labels = labels->tail)
@@ -97,8 +97,8 @@ void printStm(T_stm stm, int depth)
         printf(", ");
     }
 
-    printf("])");
-    changeLineIfNeeded();
+    printf(")");
+    changeLineIfNeeded(depth);
     break;
   }
   case T_CJUMP:
@@ -109,7 +109,7 @@ void printStm(T_stm stm, int depth)
     printf(", ");
     printTreeExp(stm->CJUMP.rhs, depth + 1);
     printf(", %s, %s)", stm->CJUMP.trueLabel->name, stm->CJUMP.falseLabel->name);
-    changeLineIfNeeded();
+    changeLineIfNeeded(depth);
     break;
   case T_MOVE:
     printf("MOVE(");
@@ -117,7 +117,7 @@ void printStm(T_stm stm, int depth)
     printf(", ");
     printTreeExp(stm->MOVE.src, depth + 1);
     printf(")");
-    changeLineIfNeeded();
+    changeLineIfNeeded(depth);
     break;
   case T_EXP:
     printTreeExp(stm->EXP, depth);
