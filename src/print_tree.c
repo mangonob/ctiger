@@ -115,13 +115,12 @@ void printStm(T_stm stm, int depth)
     printf("MOVE(");
     printTreeExp(stm->MOVE.dst, depth + 1);
     printf(", ");
-    printTreeExp(stm->MOVE.dst, depth + 1);
+    printTreeExp(stm->MOVE.src, depth + 1);
     printf(")");
     changeLineIfNeeded();
     break;
   case T_EXP:
-    printTreeExp(stm->EXP, depth + 1);
-    changeLineIfNeeded();
+    printTreeExp(stm->EXP, depth);
     break;
   }
 }

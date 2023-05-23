@@ -48,4 +48,6 @@ static struct Cx unCx(Tr_exp e);
 
 void Tr_printTree(Tr_exp exp);
 
+void __Tr_test();
+
 #endif

@@ -126,3 +126,22 @@ void Tr_printTree(Tr_exp exp)
 {
   printStmList(T_StmList(unNx(exp), NULL), 0);
 }
+
+void __Tr_test()
+{
+  Temp_temp r = Temp_newtemp();
+  Temp_label t = Temp_newLabel();
+  Temp_label f = Temp_newLabel();
+  Tr_exp e = Tr_Cx(NULL, NULL, T_Exp(T_Const(42)));
+
+  T_exp exp = T_vEseq(
+      T_Temp(r),
+      T_Move(T_Temp(r), T_Const(1)),
+      e->cx.stm,
+      T_Label(f),
+      T_Move(T_Temp(r), T_Const(0)),
+      T_Label(t),
+      NULL);
+
+  Tr_printTree(Tr_Ex(exp));
+}
