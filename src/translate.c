@@ -56,14 +56,14 @@ static T_exp unEx(Tr_exp e)
     //                             T_Eseq(T_Move(T_Temp(r), T_Const(0)),
     //                                    T_Eseq(T_Label(t), T_Temp(r))))));
 
-    return vT_Eseq(
+    T_vEseq(
+        T_Temp(r),
         T_Move(T_Temp(r), T_Const(1)),
         e->cx.stm,
         T_Label(f),
         T_Move(T_Temp(r), T_Const(0)),
         T_Label(t),
-        T_Temp(r),
-        0);
+        NULL);
   }
   case Tr_nx:
     return T_Eseq(e->nx, T_Const(0));

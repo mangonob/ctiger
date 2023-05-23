@@ -27,7 +27,7 @@ T_stm T_Seq(T_stm left, T_stm right)
   return p;
 }
 
-T_stm vT_Seq(T_stm stm, ...)
+T_stm T_vSeq(T_stm stm, ...)
 {
   if (!stm)
     return NULL;
@@ -129,36 +129,26 @@ T_exp T_Eseq(T_stm stm, T_exp exp)
   return p;
 }
 
-T_exp vT_Eseq(T_stm stm, ...)
+T_exp T_vEseq(T_exp exp, T_stm sideEffect, ...)
 {
-  if (!stm)
-    return NULL;
-
-  T_exp root = T_Eseq(stm, NULL);
-  T_exp exp = root;
+  if (!sideEffect)
+    return exp;
 
   va_list args;
-  va_start(args, stm);
-  void *curr = va_arg(args, void *);
-  void *next = va_arg(args, void *);
-  while (curr)
+  va_start(args, sideEffect);
+  T_exp eseq = T_Eseq(sideEffect, exp);
+  T_exp result = eseq;
+
+  T_stm stm = va_arg(args, T_stm);
+  while (stm)
   {
-    if (next)
-    {
-      exp->ESEQ.exp = T_Eseq(curr, NULL);
-    }
-    else
-    {
-      exp->ESEQ.exp = curr;
-    }
-
-    exp = exp->ESEQ.exp;
-    curr = next;
-    next = va_arg(args, void *);
+    eseq->ESEQ.exp = T_Eseq(stm, eseq->ESEQ.exp);
+    eseq = eseq->ESEQ.exp;
+    stm = va_arg(args, T_stm);
   }
-  va_end(args);
 
-  return root;
+  va_end(args);
+  return result;
 }
 
 T_exp T_Name(Temp_label l)
