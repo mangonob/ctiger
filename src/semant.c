@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include "semant.h"
-#include "error.h"
+#include "errormsg.h"
 #include "absyn.h"
 #include "env.h"
 #include "utils.h"
@@ -645,18 +645,4 @@ A_record A_RecordListLookup(A_record_list list, S_symbol sym)
     p = p->tail;
   }
   return NULL;
-}
-
-_Noreturn void SM_Error(A_Pos pos, const char *msg, ...)
-{
-  if (msg)
-  {
-    va_list args;
-    va_start(args, msg);
-    vfprintf(stderr, msg, args);
-    va_end(args);
-  }
-
-  fprintf(stderr, " (line: %d, column: %d)\n", pos.row, pos.column);
-  exit(Semant_Error);
 }
