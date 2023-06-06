@@ -1,5 +1,6 @@
 #ifndef ABSYNC_HEADER__
 #define ABSYNC_HEADER__
+#include <stdbool.h>
 #include "symbol.h"
 
 /* row number and line number in source code */
@@ -92,9 +93,9 @@ struct A_exp_
     struct
     {
       A_exp condition;
-      A_exp body;
+      A_exp then;
       A_exp els;
-    } if_exp;
+    } iff;
     struct
     {
       A_exp condition;
@@ -106,6 +107,7 @@ struct A_exp_
       A_exp from;
       A_exp to;
       A_exp body;
+      bool escape;
     } forr;
     struct
     {
@@ -180,13 +182,14 @@ struct A_dec_
       A_id var;
       A_id type_id;
       A_exp exp;
+      bool escape;
     } vardec;
     struct
     {
       A_id funcname;
       A_tyfields parameters;
       A_id return_type;
-      A_exp init;
+      A_exp body;
     } funcdec;
   };
 };
@@ -219,6 +222,7 @@ struct A_tyfield_
   A_id name;
   A_id type_id;
   A_Pos pos;
+  bool escape;
 };
 
 struct A_tyfields_
@@ -243,7 +247,7 @@ A_exp A_CallExp(A_Pos pos, A_id func, A_expseq args);
 A_exp A_OpExp(A_Pos pos, A_oper oper, A_exp lhs, A_exp rhs);
 A_exp A_RecordExp(A_Pos pos, A_id type_id, A_record_list record_list);
 A_exp A_ArrayExp(A_Pos pos, A_id type_id, A_exp capcity, A_exp element);
-A_exp A_IfExp(A_Pos pos, A_exp condition, A_exp body, A_exp els);
+A_exp A_IfExp(A_Pos pos, A_exp condition, A_exp then, A_exp els);
 A_exp A_WhileExp(A_Pos pos, A_exp condition, A_exp body);
 A_exp A_ForExp(A_Pos pos, A_id var, A_exp lo, A_exp hi, A_exp body);
 A_exp A_BreakExp(A_Pos pos);

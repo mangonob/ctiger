@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "print_absyn.h"
+#include "utils.h"
 
 void printExp_(A_exp exp);
 void printVar(A_var var);
@@ -99,20 +100,20 @@ void printExp_(A_exp exp)
     break;
   case A_ifExp:
     printf("if ");
-    printExp_(exp->if_exp.condition);
+    printExp_(exp->iff.condition);
     printf(" then");
     indent();
     changeLine();
-    printExp_(exp->if_exp.body);
+    printExp_(exp->iff.then);
     unindent();
 
-    if (exp->if_exp.els)
+    if (exp->iff.els)
     {
       changeLine();
       printf("else");
       indent();
       changeLine();
-      printExp_(exp->if_exp.els);
+      printExp_(exp->iff.els);
       unindent();
     }
 
@@ -127,7 +128,7 @@ void printExp_(A_exp exp)
     unindent();
     break;
   case A_forExp:;
-    printf("for %s := ", exp->forr.var->id->name);
+    printf("for %s%s := ", exp->forr.var->id->name, exp->forr.escape ? tintDanger(" (escaped)") : "");
     printExp_(exp->forr.from);
     printf(" to ");
     printExp_(exp->forr.to);
@@ -211,7 +212,7 @@ void printDec(A_dec dec)
     printTy(dec->typedec.ty);
     break;
   case A_varDec:
-    printf("var %s ", dec->vardec.var->id->name);
+    printf("var %s%s ", dec->vardec.var->id->name, dec->vardec.escape ? tintDanger(" (escaped)") : "");
     if (dec->vardec.type_id)
       printf(": %s ", dec->vardec.type_id->id->name);
     printf(":= ");
@@ -226,17 +227,17 @@ void printDec(A_dec dec)
       printf(": %s ", dec->funcdec.return_type->id->name);
     }
     printf("=");
-    if (is_exp_verbose(dec->funcdec.init))
+    if (is_exp_verbose(dec->funcdec.body))
     {
       indent();
       changeLine();
-      printExp_(dec->funcdec.init);
+      printExp_(dec->funcdec.body);
       unindent();
     }
     else
     {
       printf(" ");
-      printExp_(dec->funcdec.init);
+      printExp_(dec->funcdec.body);
     }
     break;
   }
@@ -259,7 +260,7 @@ void printTyFields(A_tyfields fields)
 
 void printTyField(A_tyfield field)
 {
-  printf("%s : %s", field->name->id->name, field->type_id->id->name);
+  printf("%s%s : %s", field->name->id->name, field->escape ? tintDanger(" (escaped)") : "", field->type_id->id->name);
 }
 
 void printTy(A_ty ty)

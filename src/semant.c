@@ -228,21 +228,21 @@ expty transExp(S_table venv, S_table tenv, A_exp exp)
   }
   case A_ifExp:
   {
-    expty cond = transExp(venv, tenv, exp->if_exp.condition);
+    expty cond = transExp(venv, tenv, exp->iff.condition);
 
     if (!checkType(cond.ty, Ty_Int()))
-      SM_Error(exp->if_exp.condition->pos, "if condition must be int type");
+      SM_Error(exp->iff.condition->pos, "if condition must be int type");
 
-    expty body = transExp(venv, tenv, exp->if_exp.body);
+    expty body = transExp(venv, tenv, exp->iff.then);
 
-    if (exp->if_exp.els)
+    if (exp->iff.els)
     {
-      expty els = transExp(venv, tenv, exp->if_exp.els);
+      expty els = transExp(venv, tenv, exp->iff.els);
 
       if (checkType(body.ty, els.ty) || checkType(els.ty, body.ty))
         return expTy(NULL, body.ty);
       else
-        SM_Error(exp->if_exp.els->pos, "unmatch type in if-else expression");
+        SM_Error(exp->iff.els->pos, "unmatch type in if-else expression");
     }
     else
     {
@@ -402,10 +402,10 @@ void transDec(S_table venv, S_table tenv, A_dec dec)
         formals = formals->tail;
       }
 
-      expty init = transExp(venv, tenv, dec->funcdec.init);
+      expty init = transExp(venv, tenv, dec->funcdec.body);
 
       if (entry->fun.result && entry->fun.result != Ty_Void() && !checkType(entry->fun.result, init.ty))
-        SM_Error(dec->funcdec.init->pos, "function return type unmatched");
+        SM_Error(dec->funcdec.body->pos, "function return type unmatched");
     }
     S_endScope(venv);
 

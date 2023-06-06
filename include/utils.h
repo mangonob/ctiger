@@ -23,4 +23,23 @@ _Noreturn void fatalError(char *msg);
 
 _Noreturn void notImplementation();
 
+typedef enum
+{
+  TINT_BLACK,
+  TINT_RED,
+  TINT_GREEN,
+  TINT_YELLOW,
+  TINT_BLUE,
+  TINT_PURPLE,
+  TINT_CYAN,
+  TINT_WHITE,
+} TintColor;
+
+char *tintString(char *input, TintColor color);
+
+char *tintDanger(char *input);
+char *tintWarning(char *input);
+char *tintSuccess(char *input);
+char *tintInfo(char *input);
+
 #endif

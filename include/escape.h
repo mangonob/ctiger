@@ -5,13 +5,4 @@
 
 void Esc_findEscape(A_exp exp);
 
-typedef struct Esc_escapeEntry_ *Esc_escapeEntry;
-struct Esc_escapeEntry_
-{
-  int depth;
-  bool *escape;
-};
-
-Esc_escapeEntry Esc_EscapeEntry(int depth, bool *escape);
-
 #endif

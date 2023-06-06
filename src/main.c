@@ -6,6 +6,7 @@
 #include "semant.h"
 #include "env.h"
 #include "types.h"
+#include "escape.h"
 
 extern int yyparse(FILE *input);
 extern A_exp tgroot;
@@ -44,9 +45,19 @@ void parse_wrap(FILE *input)
   if (yyparse(input))
     exit(1);
 
-  expty exp = transExp(E_base_venv(), E_base_tenv(), tgroot);
-  fprintTy(stdout, exp.ty);
-  puts("");
+  if (0)
+  {
+    // print type check result
+    expty exp = transExp(E_base_venv(), E_base_tenv(), tgroot);
+    fprintTy(stdout, exp.ty);
+    puts("");
+  }
+  else
+  {
+    // print AST
+    Esc_findEscape(tgroot);
+    printExp(tgroot);
+  }
 }
 
 void usage()

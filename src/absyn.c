@@ -98,14 +98,14 @@ A_exp A_ArrayExp(A_Pos pos, A_id type_id, A_exp capcity, A_exp element)
   return p;
 }
 
-A_exp A_IfExp(A_Pos pos, A_exp condition, A_exp body, A_exp els)
+A_exp A_IfExp(A_Pos pos, A_exp condition, A_exp then, A_exp els)
 {
   A_exp p = _malloc(sizeof(*p));
   p->type = A_ifExp;
   p->pos = pos;
-  p->if_exp.condition = condition;
-  p->if_exp.body = body;
-  p->if_exp.els = els;
+  p->iff.condition = condition;
+  p->iff.then = then;
+  p->iff.els = els;
   return p;
 }
 
@@ -128,6 +128,7 @@ A_exp A_ForExp(A_Pos pos, A_id var, A_exp lo, A_exp hi, A_exp body)
   p->forr.from = lo;
   p->forr.to = hi;
   p->forr.body = body;
+  p->forr.escape = false;
   return p;
 }
 
@@ -231,7 +232,7 @@ A_dec A_FuncDec(A_Pos pos, A_id name, A_tyfields parameters, A_id return_type, A
   p->funcdec.funcname = name;
   p->funcdec.parameters = parameters;
   p->funcdec.return_type = return_type;
-  p->funcdec.init = init;
+  p->funcdec.body = init;
   return p;
 }
 
@@ -253,6 +254,7 @@ A_dec A_VarDec(A_Pos pos, A_id var, A_id type_id, A_exp exp)
   p->vardec.var = var;
   p->vardec.type_id = type_id;
   p->vardec.exp = exp;
+  p->vardec.escape = false;
   return p;
 }
 
@@ -325,6 +327,7 @@ A_tyfield A_TyField(A_Pos pos, A_id name, A_id type_id)
   p->name = name;
   p->type_id = type_id;
   p->pos = pos;
+  p->escape = false;
   return p;
 }
 
