@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include "absyn.h"
 #include "parser.h"
-#include "print_absyn.h"
+#include "print_tree.h"
+#include "translate.h"
 #include "semant.h"
 #include "env.h"
 #include "types.h"
@@ -45,18 +46,24 @@ void parse_wrap(FILE *input)
   if (yyparse(input))
     exit(1);
 
-  if (0)
+  Esc_findEscape(tgroot);
+  F_fragList frag_list = SEM_transProg(tgroot);
+  for (; frag_list; frag_list = frag_list->tail)
   {
-    // print type check result
-    expty exp = transExp(E_base_venv(), E_base_tenv(), tgroot);
-    fprintTy(stdout, exp.ty);
-    puts("");
-  }
-  else
-  {
-    // print AST
-    Esc_findEscape(tgroot);
-    printExp(tgroot);
+    F_frag frag = frag_list->head;
+    switch (frag->kind)
+    {
+    case F_stringFrag:
+      printf("======== String Data ========\n");
+      printf("%s:\n", frag->stringg.label->name);
+      printf("%s\n", frag->stringg.str);
+      break;
+    case F_procFrag:
+      printf("======== Procedure ========\n");
+      printf("%s:\n", F_name(frag->proc.frame)->name);
+      printStmList(T_StmList(frag->proc.body, NULL), 0);
+      break;
+    }
   }
 }
 

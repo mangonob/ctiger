@@ -59,7 +59,7 @@ struct A_exp_
   A_Pos pos;
   union
   {
-    char *str;
+    string str;
     long int_value;
     A_var var;
     struct
@@ -87,7 +87,7 @@ struct A_exp_
     struct
     {
       A_id type_id;
-      A_exp capcity;
+      A_exp capacity;
       A_exp element;
     } array;
     struct
@@ -112,7 +112,7 @@ struct A_exp_
     struct
     {
       A_decs decs;
-      A_expseq body;
+      A_exp body;
     } let;
   };
 };
@@ -238,7 +238,7 @@ struct A_id_
 };
 
 A_exp A_IntExp(A_Pos pos, long i);
-A_exp A_StrExp(A_Pos pos, char *str);
+A_exp A_StrExp(A_Pos pos, string str);
 A_exp A_NilExp(A_Pos pos);
 A_exp A_VarExp(A_var var);
 A_exp A_AssignExp(A_Pos pos, A_var var, A_exp exp);
@@ -246,20 +246,20 @@ A_exp A_SeqExp(A_Pos pos, A_expseq seq);
 A_exp A_CallExp(A_Pos pos, A_id func, A_expseq args);
 A_exp A_OpExp(A_Pos pos, A_oper oper, A_exp lhs, A_exp rhs);
 A_exp A_RecordExp(A_Pos pos, A_id type_id, A_record_list record_list);
-A_exp A_ArrayExp(A_Pos pos, A_id type_id, A_exp capcity, A_exp element);
+A_exp A_ArrayExp(A_Pos pos, A_id type_id, A_exp capacity, A_exp element);
 A_exp A_IfExp(A_Pos pos, A_exp condition, A_exp then, A_exp els);
 A_exp A_WhileExp(A_Pos pos, A_exp condition, A_exp body);
 A_exp A_ForExp(A_Pos pos, A_id var, A_exp lo, A_exp hi, A_exp body);
 A_exp A_BreakExp(A_Pos pos);
-A_exp A_LetExp(A_Pos pos, A_decs decs, A_expseq body);
+A_exp A_LetExp(A_Pos pos, A_decs decs, A_exp body);
 A_var A_SimpleVar(A_Pos pos, A_id name);
 A_var A_FieldVar(A_Pos pos, A_var var, A_id name);
 A_var A_SubscriptVar(A_Pos pos, A_var var, A_exp exp);
 A_expseq A_ExpSeq(A_exp head, A_expseq tail);
-A_expseq A_ExpSeqReverse(A_expseq seq);
+A_expseq A_ExpSeqReversed(A_expseq seq);
 A_record A_Record(A_Pos pos, A_id name, A_exp value);
 A_record_list A_RecordList(A_record head, A_record_list tail);
-A_record_list A_RecordListReverse(A_record_list list);
+A_record_list A_RecordListReversed(A_record_list list);
 A_dec A_FuncDec(A_Pos pos, A_id name, A_tyfields parameters, A_id return_type, A_exp init);
 A_dec A_TypeDec(A_Pos pos, A_id type_id, A_ty ty);
 A_dec A_VarDec(A_Pos pos, A_id var, A_id type_id, A_exp exp);
@@ -267,9 +267,9 @@ A_ty A_NamedTy(A_Pos pos, A_id named);
 A_ty A_ArrayTy(A_Pos pos, A_id array);
 A_ty A_RecordTy(A_Pos pos, A_tyfields fields);
 A_decs A_Decs(A_dec head, A_decs tail);
-A_decs A_DecsReverse(A_decs decs);
+A_decs A_DecsReversed(A_decs decs);
 A_tyfields A_TyFields(A_tyfield head, A_tyfields tail);
-A_tyfields A_TyFieldsReverse(A_tyfields tyfields);
+A_tyfields A_TyFieldsReversed(A_tyfields tyfields);
 A_tyfield A_TyField(A_Pos pos, A_id name, A_id type_id);
 A_id A_Id(A_Pos pos, S_symbol id);
 

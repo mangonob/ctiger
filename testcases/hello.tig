@@ -1,10 +1,8 @@
 let
-  var c: int := 42
-  function bar(): int = fooBar() + c
-  var bbb: int := bar()
-  type b = array of b
-  type ccc = {a: int, b: ccc}
-  function fooBar(): int = 42 + bbb
+  type intArray = array of int
+  type ccc = {a: int, b: ccc, c: string, d: intArray}
+  var ctest := ccc { a = 42 , b = nil , c = "helloworld", d = intArray [10] of 42 }
+  function fooBar(a: int, b: int): int = a + b
 in
-  ccc { a = 42 , b = nil , b = nil }
+  while ctest.a > fooBar(1, 42) & size(ctest.c) > 10 do print(ctest.c)
 end

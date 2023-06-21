@@ -129,28 +129,6 @@ T_exp T_Eseq(T_stm stm, T_exp exp)
   return p;
 }
 
-T_exp T_vEseq(T_exp exp, T_stm sideEffect, ...)
-{
-  if (!sideEffect)
-    return exp;
-
-  va_list args;
-  va_start(args, sideEffect);
-  T_exp eseq = T_Eseq(sideEffect, exp);
-  T_exp result = eseq;
-
-  T_stm stm = va_arg(args, T_stm);
-  while (stm)
-  {
-    eseq->ESEQ.exp = T_Eseq(stm, eseq->ESEQ.exp);
-    eseq = eseq->ESEQ.exp;
-    stm = va_arg(args, T_stm);
-  }
-
-  va_end(args);
-  return result;
-}
-
 T_exp T_Name(Temp_label l)
 {
   T_exp p = _malloc(sizeof(*p));
@@ -174,4 +152,58 @@ T_exp T_Call(T_exp fun, T_expList args)
   p->CALL.fun = fun;
   p->CALL.args = args;
   return p;
+}
+
+T_relOp T_notRel(T_relOp relOp)
+{
+  switch (relOp)
+  {
+  case T_eq:
+    return T_ne;
+  case T_ne:
+    return T_eq;
+  case T_lt:
+    return T_ge;
+  case T_gt:
+    return T_le;
+  case T_le:
+    return T_gt;
+  case T_ge:
+    return T_lt;
+  case T_ult:
+    return T_uge;
+  case T_ule:
+    return T_ugt;
+  case T_ugt:
+    return T_ule;
+  case T_uge:
+    return T_ult;
+  }
+}
+
+T_relOp T_commute(T_relOp relOp)
+{
+  switch (relOp)
+  {
+  case T_eq:
+    return T_eq;
+  case T_ne:
+    return T_ne;
+  case T_lt:
+    return T_gt;
+  case T_gt:
+    return T_lt;
+  case T_le:
+    return T_ge;
+  case T_ge:
+    return T_le;
+  case T_ult:
+    return T_ugt;
+  case T_ule:
+    return T_uge;
+  case T_ugt:
+    return T_ult;
+  case T_uge:
+    return T_ule;
+  }
 }

@@ -117,7 +117,7 @@ exp:        INT                                 { $$ = A_IntExp(LOC(@1), $1); }
             | exp "*" exp                       { $$ = A_OpExp(LOC(@2), A_timesOp, $1, $3); }
             | exp "/" exp                       { $$ = A_OpExp(LOC(@2), A_divideOp, $1, $3); }
             | exp "=" exp                       { $$ = A_OpExp(LOC(@2), A_eqOp, $1, $3); }
-            | exp "<>" exp                      { $$ = A_OpExp(LOC(@2), A_neqOp, $1, $3); } 
+            | exp "<>" exp                      { $$ = A_OpExp(LOC(@2), A_neqOp, $1, $3); }
             | exp ">" exp                       { $$ = A_OpExp(LOC(@2), A_gtOp, $1, $3); }
             | exp "<" exp                       { $$ = A_OpExp(LOC(@2), A_ltOp, $1, $3); }
             | exp ">=" exp                      { $$ = A_OpExp(LOC(@2), A_geOp, $1, $3); }
@@ -131,7 +131,7 @@ exp:        INT                                 { $$ = A_IntExp(LOC(@1), $1); }
             | WHILE exp DO exp                  { $$ = A_WhileExp(LOC(@1), $2, $4); }
             | FOR id ":=" exp TO exp DO exp     { $$ = A_ForExp(LOC(@1), $2, $4, $6, $8); }
             | BREAK                             { $$ = A_BreakExp(LOC(@1)); }
-            | LET decs IN expseq END            { $$ = A_LetExp(LOC(@1), $2, $4); }
+            | LET decs IN expseq END            { $$ = A_LetExp(LOC(@1), $2, A_SeqExp(LOC(@4), $4)); }
 
 lvalue:     id %prec LVALUE                     { $$ = A_SimpleVar(LOC(@1), $1); }
             | id "[" exp "]"                    { $$ = A_SubscriptVar(LOC(@1), A_SimpleVar(LOC(@1), $1), $3); }
@@ -139,27 +139,27 @@ lvalue:     id %prec LVALUE                     { $$ = A_SimpleVar(LOC(@1), $1);
             | lvalue "[" exp "]"                { $$ = A_SubscriptVar(LOC(@1), $1, $3); }
 
 expseq:     /* empty */                         { $$ = NULL; }
-            | expseq_                           { $$ = A_ExpSeqReverse($1); }
+            | expseq_                           { $$ = A_ExpSeqReversed($1); }
 
 expseq_:    exp                                 { $$ = A_ExpSeq($1, NULL); }
             | expseq_ ";" exp                   { $$ = A_ExpSeq($3, $1); }
 
 arg_list:   /* empty */                         { $$ = NULL; }
-            | arg_list_                         { $$ = A_ExpSeqReverse($1); }
+            | arg_list_                         { $$ = A_ExpSeqReversed($1); }
 
 arg_list_:  exp                                 { $$ = A_ExpSeq($1, NULL); }
             | arg_list_ "," exp                 { $$ = A_ExpSeq($3, $1); }
 
 
 record_list:    /* empty */                     { $$ = NULL; }
-            | record_list_                      { $$ = A_RecordListReverse($1); }
+            | record_list_                      { $$ = A_RecordListReversed($1); }
 
 record_list_:   record                          { $$ = A_RecordList($1, NULL); }
             | record_list_ "," record           { $$ = A_RecordList($3, $1); }
 
 record:     id "=" exp                          { $$ = A_Record(LOC(@1), $1, $3); }
 
-decs:       decs_                               { $$ = A_DecsReverse($1); }
+decs:       decs_                               { $$ = A_DecsReversed($1); }
 
 decs_:      /* empty */                         { $$ = NULL; }
             | decs_ dec                         { $$ = A_Decs($2, $1); }
@@ -175,7 +175,7 @@ ty:         id                                  { $$ = A_NamedTy(LOC(@1), $1); }
             | "{" tyfields "}"                  { $$ = A_RecordTy(LOC(@1), $2); }
 
 tyfields:   /* empty */                         { $$ = NULL; }
-            | tyfields_                         { $$ = A_TyFieldsReverse($1); }
+            | tyfields_                         { $$ = A_TyFieldsReversed($1); }
 
 tyfields_:  tyfield                             { $$ = A_TyFields($1, NULL); }
             | tyfields_ "," tyfield             { $$ = A_TyFields($3, $1); }

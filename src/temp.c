@@ -26,9 +26,9 @@ Temp_tempList Temp_TempList(Temp_temp head, Temp_tempList tail)
   return p;
 }
 
+static int labels = 0;
 Temp_label Temp_newLabel()
 {
-  static int labels = 0;
   char buf[100];
   sprintf(buf, "L%d", labels++);
   return Temp_namedLabel(String(buf));
@@ -37,6 +37,13 @@ Temp_label Temp_newLabel()
 Temp_label Temp_namedLabel(string name)
 {
   return S_Symbol(name);
+}
+
+Temp_label Temp_newProcLabel(string name)
+{
+  char buf[100];
+  sprintf(buf, "__%s_L%d", name, labels++);
+  return Temp_namedLabel(String(buf));
 }
 
 string Temp_labelstring(Temp_label s)

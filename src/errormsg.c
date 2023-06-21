@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "errormsg.h"
 
-_Noreturn void SM_Error(A_Pos pos, const char *msg, ...)
+_Noreturn void EM_Error(A_Pos pos, const char *msg, ...)
 {
   if (msg)
   {
@@ -14,5 +14,5 @@ _Noreturn void SM_Error(A_Pos pos, const char *msg, ...)
   }
 
   fprintf(stderr, " (line: %d, column: %d)\n", pos.row, pos.column);
-  exit(Semant_Error);
+  exit(1);
 }

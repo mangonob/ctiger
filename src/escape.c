@@ -20,8 +20,7 @@ static void traverseVar(S_table env, int depth, A_var var);
 
 void Esc_findEscape(A_exp exp)
 {
-  S_table env = S_empty();
-  traverseExp(env, 0, exp);
+  traverseExp(S_empty(), 0, exp);
 }
 
 Esc_escapeEntry Esc_EscapeEntry(int depth, bool *escape)
@@ -66,7 +65,7 @@ static void traverseExp(S_table env, int depth, A_exp exp)
     break;
   }
   case A_arrayExp:
-    traverseExp(env, depth, exp->array.capcity);
+    traverseExp(env, depth, exp->array.capacity);
     traverseExp(env, depth, exp->array.element);
     break;
   case A_ifExp:
@@ -91,11 +90,7 @@ static void traverseExp(S_table env, int depth, A_exp exp)
     A_decs decs = exp->let.decs;
     for (; decs && decs->head; decs = decs->tail)
       traverseDec(env, depth, decs->head);
-
-    A_expseq seq = exp->let.body;
-    for (; seq && seq->head; seq = seq->tail)
-      traverseExp(env, depth, seq->head);
-
+    traverseExp(env, depth, exp->let.body);
     break;
   }
   }

@@ -47,7 +47,7 @@ Ty_tyList Ty_TyList(Ty_ty head, Ty_tyList tail)
   return list;
 }
 
-Ty_tyList Ty_TyListReverse(Ty_tyList tys)
+Ty_tyList Ty_TyListReversed(Ty_tyList tys)
 {
   Ty_tyList r = NULL;
 
@@ -73,7 +73,7 @@ Ty_fieldList Ty_FieldList(Ty_field head, Ty_fieldList tail)
   return fieldList;
 }
 
-Ty_fieldList Ty_FieldListReverse(Ty_fieldList fields)
+Ty_fieldList Ty_FieldListReversed(Ty_fieldList fields)
 {
   Ty_fieldList r = NULL;
 

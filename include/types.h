@@ -61,10 +61,10 @@ Ty_ty Ty_Named(S_symbol sym, Ty_ty ty);
 Ty_ty Ty_Record(Ty_fieldList fields);
 
 Ty_tyList Ty_TyList(Ty_ty head, Ty_tyList tail);
-Ty_tyList Ty_TyListReverse(Ty_tyList tys);
+Ty_tyList Ty_TyListReversed(Ty_tyList tys);
 Ty_field Ty_Field(S_symbol name, Ty_ty ty);
 Ty_fieldList Ty_FieldList(Ty_field head, Ty_fieldList tail);
-Ty_fieldList Ty_FieldListReverse(Ty_fieldList fields);
+Ty_fieldList Ty_FieldListReversed(Ty_fieldList fields);
 
 int fprintTy(FILE *file, Ty_ty ty);
 

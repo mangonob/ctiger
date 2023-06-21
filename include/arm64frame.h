@@ -6,9 +6,9 @@
 struct F_frame_
 {
   F_accessList formals;
-  int locals;
+  F_accessList locals;
   int offset;
-  Temp_label entryPoint;
+  Temp_label name;
 };
 
 struct F_access_

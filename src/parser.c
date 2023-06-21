@@ -1747,7 +1747,7 @@ yyreduce:
 
   case 30:
 #line 134 "/Users/mangonob/Developer/ctiger/src/parser.y"
-    { (yyval.exp) = A_LetExp(LOC((yylsp[(1) - (5)])), (yyvsp[(2) - (5)].decs), (yyvsp[(4) - (5)].expseq)); }
+    { (yyval.exp) = A_LetExp(LOC((yylsp[(1) - (5)])), (yyvsp[(2) - (5)].decs), A_SeqExp(LOC((yylsp[(4) - (5)])), (yyvsp[(4) - (5)].expseq))); }
     break;
 
   case 31:
@@ -1777,7 +1777,7 @@ yyreduce:
 
   case 36:
 #line 142 "/Users/mangonob/Developer/ctiger/src/parser.y"
-    { (yyval.expseq) = A_ExpSeqReverse((yyvsp[(1) - (1)].expseq)); }
+    { (yyval.expseq) = A_ExpSeqReversed((yyvsp[(1) - (1)].expseq)); }
     break;
 
   case 37:
@@ -1797,7 +1797,7 @@ yyreduce:
 
   case 40:
 #line 148 "/Users/mangonob/Developer/ctiger/src/parser.y"
-    { (yyval.arg_list) = A_ExpSeqReverse((yyvsp[(1) - (1)].arg_list)); }
+    { (yyval.arg_list) = A_ExpSeqReversed((yyvsp[(1) - (1)].arg_list)); }
     break;
 
   case 41:
@@ -1817,7 +1817,7 @@ yyreduce:
 
   case 44:
 #line 155 "/Users/mangonob/Developer/ctiger/src/parser.y"
-    { (yyval.record_list) = A_RecordListReverse((yyvsp[(1) - (1)].record_list)); }
+    { (yyval.record_list) = A_RecordListReversed((yyvsp[(1) - (1)].record_list)); }
     break;
 
   case 45:
@@ -1837,7 +1837,7 @@ yyreduce:
 
   case 48:
 #line 162 "/Users/mangonob/Developer/ctiger/src/parser.y"
-    { (yyval.decs) = A_DecsReverse((yyvsp[(1) - (1)].decs)); }
+    { (yyval.decs) = A_DecsReversed((yyvsp[(1) - (1)].decs)); }
     break;
 
   case 49:
@@ -1892,7 +1892,7 @@ yyreduce:
 
   case 59:
 #line 178 "/Users/mangonob/Developer/ctiger/src/parser.y"
-    { (yyval.tyfields) = A_TyFieldsReverse((yyvsp[(1) - (1)].tyfields)); }
+    { (yyval.tyfields) = A_TyFieldsReversed((yyvsp[(1) - (1)].tyfields)); }
     break;
 
   case 60:
@@ -2163,3 +2163,4 @@ yyreturn:
 void yyerror(char *s) {
     printf("parser error: %s at line: %d, column: %d\n", s, yylloc.first_line, yylloc.first_column);
 }
+

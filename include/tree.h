@@ -145,7 +145,6 @@ T_exp T_Binop(T_binOp op, T_exp lhs, T_exp rhs);
 T_exp T_Mem(T_exp exp);
 T_exp T_Temp(Temp_temp temp);
 T_exp T_Eseq(T_stm, T_exp);
-T_exp T_vEseq(T_exp exp, T_stm sideEffect, ...);
 T_exp T_Name(Temp_label);
 T_exp T_Const(int value);
 T_exp T_Call(T_exp fun, T_expList args);

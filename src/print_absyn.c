@@ -94,7 +94,7 @@ void printExp_(A_exp exp)
     break;
   case A_arrayExp:
     printf("%s [ ", exp->array.type_id->id->name);
-    printExp_(exp->array.capcity);
+    printExp_(exp->array.capacity);
     printf(" ] of ");
     printExp_(exp->array.element);
     break;
@@ -120,7 +120,9 @@ void printExp_(A_exp exp)
     break;
   case A_whileExp:
     printf("while ");
+    useinline();
     printExp_(exp->whil.condition);
+    uninline();
     printf(" do");
     indent();
     changeLine();
@@ -159,7 +161,7 @@ void printExp_(A_exp exp)
     printf("in");
     indent();
     changeLine();
-    printExpSeq(exp->let.body);
+    printExp(exp->let.body);
     unindent();
     if (exp->let.body)
       changeLine();

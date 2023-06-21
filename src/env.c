@@ -2,18 +2,21 @@
 #include "env.h"
 #include "utils.h"
 
-E_enventry E_VarEntry(Ty_ty ty)
+E_enventry E_VarEntry(Tr_access access, Ty_ty ty)
 {
   E_enventry e = _malloc(sizeof(*e));
   e->type = E_varEntry;
-  e->var = ty;
+  e->var.access = access;
+  e->var.ty = ty;
   return e;
 }
 
-E_enventry E_FunEntry(Ty_tyList formals, Ty_ty result)
+E_enventry E_FunEntry(Tr_level level, Temp_label label, Ty_tyList formals, Ty_ty result)
 {
   E_enventry e = _malloc(sizeof(*e));
   e->type = E_funEntry;
+  e->fun.level = level;
+  e->fun.label = label;
   e->fun.formals = formals;
   e->fun.result = result;
   return e;
@@ -29,13 +32,12 @@ S_table E_base_tenv()
   return table;
 }
 
-E_enventry makeFuncEntry(string name, Ty_ty result, ...)
+static E_enventry makeFuncEntry(string name, Ty_ty result, ...)
 {
   va_list args;
   va_start(args, result);
 
   Ty_tyList formals = NULL;
-
   while (1)
   {
     Ty_ty param = va_arg(args, Ty_ty);
@@ -48,7 +50,7 @@ E_enventry makeFuncEntry(string name, Ty_ty result, ...)
 
   va_end(args);
 
-  return E_FunEntry(Ty_TyListReverse(formals), result);
+  return E_FunEntry(Tr_outermost(), Temp_namedLabel(name), Ty_TyListReversed(formals), result);
 }
 
 S_table E_base_venv()

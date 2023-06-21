@@ -6,27 +6,12 @@
 #define SBUF_SIZE   4096
 #define YY_DECL int yylex(FILE *input)
 #ifdef YYLTYPE_IS_DECLARED
+    void position_forward();
     #define YY_USER_ACTION      do { position_forward(); } while(0);
 #endif
 
 static char str_buffer[SBUF_SIZE];
 static int str_buffer_cursor = 0;
-
-#ifdef YYLTYPE_IS_DECLARED
-    void position_forward() {
-        yylloc.first_line = yylloc.last_line;
-        yylloc.first_column = yylloc.last_column + 1;
-
-        for (int i = 0; i < yyleng; i++) {
-            if (yytext[i] == '\n') {
-                yylloc.last_line++;
-                yylloc.last_column = 0;
-            } else {
-                yylloc.last_column++;
-            }
-        }
-    }
-#endif
 
 void append_char(char ch) {
     str_buffer[str_buffer_cursor++] = ch;
@@ -115,3 +100,21 @@ ID          [a-zA-Z_][a-zA-Z0-9_]*
 <<EOF>>                     return EOF;
 
 %%
+
+#ifdef YYLTYPE_IS_DECLARED
+void position_forward() {
+    if (YY_START == INITIAL) {
+        yylloc.first_line = yylloc.last_line;
+        yylloc.first_column = yylloc.last_column + 1;
+    }
+
+    for (int i = 0; i < yyleng; i++) {
+        if (yytext[i] == '\n') {
+            yylloc.last_line++;
+            yylloc.last_column = 0;
+        } else {
+            yylloc.last_column++;
+        }
+    }
+}
+#endif

@@ -18,6 +18,7 @@ string String(char *s);
 
 /** Construct a bool list */
 U_boolList U_BoolList(bool head, U_boolList tail);
+U_boolList U_BoolListReversed(U_boolList blist);
 
 _Noreturn void fatalError(char *msg);
 

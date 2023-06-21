@@ -11,7 +11,7 @@ A_exp A_IntExp(A_Pos pos, long i)
   return p;
 }
 
-A_exp A_StrExp(A_Pos pos, char *str)
+A_exp A_StrExp(A_Pos pos, string str)
 {
   A_exp p = _malloc(sizeof(*p));
   p->type = A_strExp;
@@ -87,13 +87,13 @@ A_exp A_RecordExp(A_Pos pos, A_id type_id, A_record_list record_list)
   return p;
 }
 
-A_exp A_ArrayExp(A_Pos pos, A_id type_id, A_exp capcity, A_exp element)
+A_exp A_ArrayExp(A_Pos pos, A_id type_id, A_exp capacity, A_exp element)
 {
   A_exp p = _malloc(sizeof(*p));
   p->type = A_arrayExp;
   p->pos = pos;
   p->array.type_id = type_id;
-  p->array.capcity = capcity;
+  p->array.capacity = capacity;
   p->array.element = element;
   return p;
 }
@@ -140,7 +140,7 @@ A_exp A_BreakExp(A_Pos pos)
   return p;
 }
 
-A_exp A_LetExp(A_Pos pos, A_decs decs, A_expseq body)
+A_exp A_LetExp(A_Pos pos, A_decs decs, A_exp body)
 {
   A_exp p = _malloc(sizeof(*p));
   p->type = A_letExp;
@@ -187,7 +187,7 @@ A_expseq A_ExpSeq(A_exp head, A_expseq tail)
   return p;
 }
 
-A_expseq A_ExpSeqReverse(A_expseq seq)
+A_expseq A_ExpSeqReversed(A_expseq seq)
 {
   A_expseq r = NULL;
 
@@ -214,7 +214,7 @@ A_record_list A_RecordList(A_record head, A_record_list tail)
   return p;
 }
 
-A_record_list A_RecordListReverse(A_record_list list)
+A_record_list A_RecordListReversed(A_record_list list)
 {
   A_record_list r = NULL;
 
@@ -293,7 +293,7 @@ A_decs A_Decs(A_dec head, A_decs tail)
   return p;
 }
 
-A_decs A_DecsReverse(A_decs decs)
+A_decs A_DecsReversed(A_decs decs)
 {
   A_decs r = NULL;
 
@@ -311,7 +311,7 @@ A_tyfields A_TyFields(A_tyfield head, A_tyfields tail)
   return p;
 }
 
-A_tyfields A_TyFieldsReverse(A_tyfields tyfields)
+A_tyfields A_TyFieldsReversed(A_tyfields tyfields)
 {
   A_tyfields r = NULL;
 

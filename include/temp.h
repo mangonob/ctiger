@@ -22,6 +22,7 @@ Temp_tempList Temp_TempList(Temp_temp head, Temp_tempList tail);
 typedef S_symbol Temp_label;
 Temp_label Temp_newLabel();
 Temp_label Temp_namedLabel(string name);
+Temp_label Temp_newProcLabel(string name);
 string Temp_labelstring(Temp_label s);
 
 typedef struct Temp_labelList_ *Temp_labelList;
