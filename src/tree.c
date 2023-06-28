@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <assert.h>
 #include "tree.h"
 #include "utils.h"
 
@@ -81,6 +82,7 @@ T_stm T_Move(T_exp dst, T_exp src)
 {
   T_stm p = _malloc(sizeof(*p));
   p->kind = T_MOVE;
+  assert(dst->kind != T_CONST);
   p->MOVE.dst = dst;
   p->MOVE.src = src;
   return p;

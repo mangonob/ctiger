@@ -141,8 +141,10 @@ void printStmList(T_stmList stms, int depth)
 {
   pushStream();
   for (; stms && stms->head; stms = stms->tail)
+  {
     printStm(stms->head, depth);
-  print("\n");
+    print("\n");
+  }
   popStream();
 }
 

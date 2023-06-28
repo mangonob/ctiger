@@ -424,15 +424,16 @@ expty transExp(Tr_level level, S_table venv, S_table tenv, A_exp exp, Temp_label
 
     // break label for for-loop
     Temp_label b = Temp_newLabel();
+    expty result;
     S_beginScope(venv);
     {
       S_insert(venv, exp->forr.var->id, E_VarEntry(Tr_allocLocal(level, exp->forr.escape), Ty_Int()));
+      expty var = transVar(level, venv, tenv, A_SimpleVar(exp->forr.var->pos, exp->forr.var), brk);
       expty body = transExp(level, venv, tenv, exp->forr.body, b);
-
-      S_endScope(venv);
-      // TOOD: var
-      return expTy(Tr_forExp(Tr_nilExp(), from.exp, to.exp, body.exp, b), Ty_Void());
+      result = expTy(Tr_forExp(var.exp, from.exp, to.exp, body.exp, b), Ty_Void());
     }
+    S_endScope(venv);
+    return result;
   }
   case A_whileExp:
   {

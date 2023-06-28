@@ -1,8 +1,10 @@
-let
+/* let
   type intArray = array of int
   type ccc = {a: int, b: ccc, c: string, d: intArray}
   var ctest := ccc { a = 42 , b = nil , c = "helloworld", d = intArray [10] of 42 }
   function fooBar(a: int, b: int): int = a + b
 in
   while ctest.a > fooBar(1, 42) & size(ctest.c) > 10 do print(ctest.c)
-end
+end */
+
+(3 & 4) + 5

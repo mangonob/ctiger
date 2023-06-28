@@ -8,6 +8,7 @@
 #include "env.h"
 #include "types.h"
 #include "escape.h"
+#include "canon.h"
 
 extern int yyparse(FILE *input);
 extern A_exp tgroot;
@@ -19,7 +20,9 @@ int main(int argc, char *argv[])
 {
   if (argc == 1)
   {
-    parse_wrap(stdin);
+    FILE *test = NULL;
+    test = fopen("testcases/hello.tig", "r");
+    parse_wrap(test ? test : stdin);
   }
   else if (argc == 2)
   {
@@ -61,7 +64,21 @@ void parse_wrap(FILE *input)
     case F_procFrag:
       printf("======== Procedure ========\n");
       printf("%s:\n", F_name(frag->proc.frame)->name);
-      printStmList(T_StmList(frag->proc.body, NULL), 0);
+      if (0)
+        printStmList(T_StmList(frag->proc.body, NULL), 0);
+      else
+      {
+        T_stmList linear = C_linearize(frag->proc.body);
+        C_block block = C_basicBlocks(linear);
+        C_stmListList stmLists = block.stmLists;
+        for (; stmLists; stmLists = stmLists->tail)
+        {
+          printStmList(stmLists->head, 0);
+          // separate line of block
+          if (stmLists->tail)
+            printf("--------------------------------\n");
+        }
+      }
       break;
     }
   }
