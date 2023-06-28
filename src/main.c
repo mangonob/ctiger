@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "absyn.h"
 #include "parser.h"
 #include "print_tree.h"
@@ -9,6 +10,7 @@
 #include "types.h"
 #include "escape.h"
 #include "canon.h"
+#define TRACE 1
 
 extern int yyparse(FILE *input);
 extern A_exp tgroot;
@@ -70,13 +72,22 @@ void parse_wrap(FILE *input)
       {
         T_stmList linear = C_linearize(frag->proc.body);
         C_block block = C_basicBlocks(linear);
-        C_stmListList stmLists = block.stmLists;
-        for (; stmLists; stmLists = stmLists->tail)
+
+        if (TRACE)
         {
-          printStmList(stmLists->head, 0);
-          // separate line of block
-          if (stmLists->tail)
-            printf("--------------------------------\n");
+          T_stmList trace = C_traceSchedule(block);
+          printStmList(trace, 0);
+        }
+        else
+        {
+          C_stmListList stmLists = block.stmLists;
+          for (; stmLists; stmLists = stmLists->tail)
+          {
+            printStmList(stmLists->head, 0);
+            // separate line of block
+            if (stmLists->tail)
+              printf("--------------------------------\n");
+          }
         }
       }
       break;

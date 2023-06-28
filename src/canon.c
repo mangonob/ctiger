@@ -267,8 +267,28 @@ static void trace(T_stmList list)
     else
       last2->tail->tail = getNext();
   }
-  else if (j->kind == T_JUMP)
+  else if (j->kind == T_CJUMP)
   {
+    T_stmList t = S_lookup(block_table, j->CJUMP.trueLabel);
+    T_stmList f = S_lookup(block_table, j->CJUMP.falseLabel);
+
+    if (f)
+    {
+      last2->tail->tail = f;
+      trace(f);
+    }
+    else if (t)
+    {
+      last2->tail->head = T_Cjump(T_notRel(j->CJUMP.op), j->CJUMP.lhs, j->CJUMP.rhs, j->CJUMP.falseLabel, j->CJUMP.trueLabel);
+      last2->tail->tail = t;
+      trace(t);
+    }
+    else
+    {
+      Temp_label f = Temp_newLabel();
+      j->CJUMP.falseLabel = f;
+      last2->tail->tail = T_StmList(T_Label(f), getNext());
+    }
   }
   else
     assert(0);
