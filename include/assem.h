@@ -49,4 +49,24 @@ AS_instr AS_Move(string assem, Temp_tempList dst, Temp_tempList src);
 
 void AS_print(FILE *out, AS_instr i, Temp_map m);
 
+typedef struct AS_instrList_ *AS_instrList;
+struct AS_instrList_
+{
+  AS_instr head;
+  AS_instrList tail;
+};
+AS_instrList AS_InstrList(AS_instr head, AS_instrList tail);
+
+AS_instrList AS_splice(AS_instrList a, AS_instrList b);
+void AS_printInstrList(FILE *out, AS_instrList iList, Temp_map m);
+
+typedef struct
+{
+  string prolog;
+  AS_instrList body;
+  string epilog;
+} *AS_proc;
+
+AS_proc AS_Proc(string prolog, AS_instrList body, string epilog);
+
 #endif

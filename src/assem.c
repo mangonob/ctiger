@@ -1,5 +1,16 @@
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 #include "assem.h"
 #include "utils.h"
+#include "temp.h"
+
+AS_targets AS_Targets(Temp_labelList labels)
+{
+  AS_targets p = _malloc(sizeof(*p));
+  p->labels = labels;
+  return p;
+}
 
 AS_instr AS_Oper(string assem, Temp_tempList dst, Temp_tempList src, AS_targets jumps)
 {
@@ -28,5 +39,112 @@ AS_instr AS_Move(string assem, Temp_tempList dst, Temp_tempList src)
   p->MOVE.assem = assem;
   p->MOVE.dst = dst;
   p->MOVE.src = src;
+  return p;
+}
+
+Temp_temp nthTemp(Temp_tempList list, int n)
+{
+  assert(list);
+  return n ? nthTemp(list->tail, n - 1) : list->head;
+}
+
+Temp_label nthLabel(Temp_labelList list, int n)
+{
+  assert(list);
+  return n ? nthLabel(list->tail, n - 1) : list->head;
+}
+
+static void format(char *buff, string assem, Temp_tempList dst, Temp_tempList src, AS_targets jumps, Temp_map m)
+{
+  char *p = assem;
+
+  while (p && *p != '\0')
+  {
+    if (*p == '`')
+    {
+      p++;
+      switch (*(p++))
+      {
+      case 's':
+      {
+        int n = atoi(p++);
+        string s = Temp_look(m, nthTemp(src, n));
+        strcpy(buff, s);
+        buff += strlen(s);
+        break;
+      }
+      case 'd':
+      {
+        int n = atoi(p++);
+        string s = Temp_look(m, nthTemp(dst, n));
+        strcpy(buff, s);
+        buff += strlen(s);
+        break;
+      }
+      case 'j':
+      {
+        int n = atoi(p++);
+        string s = Temp_labelstring(nthLabel(jumps->labels, n));
+        strcpy(buff, s);
+        buff += strlen(s);
+        break;
+      }
+      case '`':
+        *(buff++) = '`';
+        break;
+      default:
+        assert(0);
+      }
+    }
+    else
+      *(buff++) = *(p++);
+  }
+  *buff = '\0';
+}
+
+void AS_print(FILE *out, AS_instr i, Temp_map m)
+{
+  char r[4096];
+  switch (i->kind)
+  {
+  case I_OPER:
+    format(r, i->OPER.assem, i->OPER.dst, i->OPER.src, i->OPER.jumps, m);
+    fprintf(out, "    %s", r);
+    ;
+    break;
+  case I_LABEL:
+    format(r, i->LABEL.assem, NULL, NULL, NULL, m);
+    fprintf(out, "%s", r);
+    ;
+    break;
+  case I_MOVE:
+    format(r, i->MOVE.assem, i->MOVE.dst, i->MOVE.src, NULL, m);
+    fprintf(out, "    %s", r);
+    ;
+    break;
+  }
+}
+
+void AS_printInstrList(FILE *out, AS_instrList iList, Temp_map m)
+{
+  for (; iList; iList = iList->tail)
+    AS_print(out, iList->head, m);
+  fprintf(out, "\n");
+}
+
+AS_instrList AS_InstrList(AS_instr head, AS_instrList tail)
+{
+  AS_instrList p = _malloc(sizeof(*p));
+  p->head = head;
+  p->tail = tail;
+  return p;
+}
+
+AS_proc AS_Proc(string prolog, AS_instrList body, string epilog)
+{
+  AS_proc p = _malloc(sizeof(*p));
+  p->prolog = prolog;
+  p->body = body;
+  p->epilog = epilog;
   return p;
 }

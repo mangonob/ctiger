@@ -10,41 +10,15 @@
 #include "types.h"
 #include "escape.h"
 #include "canon.h"
-#define TRACE 1
+#define TRACE
+#define CODEGEN
+
+#ifdef CODEGEN
+#include "codegen.h"
+#endif
 
 extern int yyparse(FILE *input);
 extern A_exp tgroot;
-
-void usage();
-void parse_wrap(FILE *input);
-
-int main(int argc, char *argv[])
-{
-  if (argc == 1)
-  {
-    FILE *test = NULL;
-    test = fopen("testcases/hello.tig", "r");
-    parse_wrap(test ? test : stdin);
-  }
-  else if (argc == 2)
-  {
-    char *filename = argv[1];
-    FILE *input = fopen(filename, "r");
-    if (!input)
-    {
-      fprintf(stderr, "cannot open file %s\n", filename);
-      exit(1);
-    }
-    parse_wrap(input);
-    fclose(input);
-  }
-  else
-  {
-    usage();
-  }
-
-  exit(0);
-}
 
 void parse_wrap(FILE *input)
 {
@@ -73,22 +47,24 @@ void parse_wrap(FILE *input)
         T_stmList linear = C_linearize(frag->proc.body);
         C_block block = C_basicBlocks(linear);
 
-        if (TRACE)
+#ifdef TRACE
+        T_stmList trace = C_traceSchedule(block);
+#ifdef CODEGEN
+        AS_instrList iList = F_codegen(frag->proc.frame, trace);
+        AS_printInstrList(stdout, iList, Temp_empty());
+#else
+        printStmList(trace, 0);
+#endif
+#else
+        C_stmListList stmLists = block.stmLists;
+        for (; stmLists; stmLists = stmLists->tail)
         {
-          T_stmList trace = C_traceSchedule(block);
-          printStmList(trace, 0);
+          printStmList(stmLists->head, 0);
+          // separate line of block
+          if (stmLists->tail)
+            printf("--------------------------------\n");
         }
-        else
-        {
-          C_stmListList stmLists = block.stmLists;
-          for (; stmLists; stmLists = stmLists->tail)
-          {
-            printStmList(stmLists->head, 0);
-            // separate line of block
-            if (stmLists->tail)
-              printf("--------------------------------\n");
-          }
-        }
+#endif
       }
       break;
     }
@@ -98,5 +74,33 @@ void parse_wrap(FILE *input)
 void usage()
 {
   printf("usage: tigerc filename\n");
+  exit(0);
+}
+
+int main(int argc, char *argv[])
+{
+  if (argc == 1)
+  {
+    FILE *test = NULL;
+    test = fopen("testcases/hello.tig", "r");
+    parse_wrap(test ? test : stdin);
+  }
+  else if (argc == 2)
+  {
+    char *filename = argv[1];
+    FILE *input = fopen(filename, "r");
+    if (!input)
+    {
+      fprintf(stderr, "cannot open file %s\n", filename);
+      exit(1);
+    }
+    parse_wrap(input);
+    fclose(input);
+  }
+  else
+  {
+    usage();
+  }
+
   exit(0);
 }

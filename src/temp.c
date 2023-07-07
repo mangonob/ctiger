@@ -106,3 +106,8 @@ Temp_map Temp_name()
     m = Temp_empty();
   return m;
 }
+
+void Temp_dumpMap(FILE *out, Temp_map m)
+{
+  // TODO dump temp map to file
+}
