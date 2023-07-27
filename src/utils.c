@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdarg.h>
 #include "utils.h"
 
 void *_malloc(size_t byte)
@@ -21,6 +22,19 @@ string String(char *s)
 {
   string p = _malloc(strlen(s) + 1);
   strcpy(p, s);
+  return p;
+}
+
+string Format(char *fmt, ...)
+{
+  va_list argv1, argv2;
+  va_start(argv1, fmt);
+  va_copy(argv2, argv1);
+  int len = vsnprintf(NULL, 0, fmt, argv1);
+  string p = _malloc(len + 1);
+  vsnprintf(p, len + 1, fmt, argv2);
+  va_end(argv1);
+  va_end(argv2);
   return p;
 }
 

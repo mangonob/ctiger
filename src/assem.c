@@ -67,16 +67,20 @@ static void format(char *buff, string assem, Temp_tempList dst, Temp_tempList sr
       {
       case 's':
       {
-        int n = atoi(p++);
-        string s = Temp_look(m, nthTemp(src, n));
+        Temp_temp t = nthTemp(src, atoi(p++));
+        string s = Temp_look(m, t);
+        if (!s)
+          s = Format("<t%d>", t->num);
         strcpy(buff, s);
         buff += strlen(s);
         break;
       }
       case 'd':
       {
-        int n = atoi(p++);
-        string s = Temp_look(m, nthTemp(dst, n));
+        Temp_temp t = nthTemp(dst, atoi(p++));
+        string s = Temp_look(m, t);
+        if (!s)
+          s = Format("<t%d>", t->num);
         strcpy(buff, s);
         buff += strlen(s);
         break;
@@ -110,17 +114,14 @@ void AS_print(FILE *out, AS_instr i, Temp_map m)
   case I_OPER:
     format(r, i->OPER.assem, i->OPER.dst, i->OPER.src, i->OPER.jumps, m);
     fprintf(out, "    %s", r);
-    ;
     break;
   case I_LABEL:
     format(r, i->LABEL.assem, NULL, NULL, NULL, m);
     fprintf(out, "%s", r);
-    ;
     break;
   case I_MOVE:
     format(r, i->MOVE.assem, i->MOVE.dst, i->MOVE.src, NULL, m);
     fprintf(out, "    %s", r);
-    ;
     break;
   }
 }
@@ -128,8 +129,10 @@ void AS_print(FILE *out, AS_instr i, Temp_map m)
 void AS_printInstrList(FILE *out, AS_instrList iList, Temp_map m)
 {
   for (; iList; iList = iList->tail)
+  {
     AS_print(out, iList->head, m);
-  fprintf(out, "\n");
+    fprintf(out, "\n");
+  }
 }
 
 AS_instrList AS_InstrList(AS_instr head, AS_instrList tail)

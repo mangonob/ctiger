@@ -15,6 +15,7 @@ struct U_boolList_
 typedef char *string;
 
 string String(char *s);
+string Format(char *fmt, ...);
 
 /** Construct a bool list */
 U_boolList U_BoolList(bool head, U_boolList tail);
