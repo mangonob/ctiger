@@ -154,6 +154,10 @@ static void munchStm(T_stm stm)
     Temp_labelList tl = Temp_LabelList(stm->CJUMP.trueLabel, NULL);
     emit(AS_Oper(Format("b%s `j0", cond), NULL, NULL, AS_Targets(tl)));
   }
+  else if (stm->kind == T_EXP)
+  {
+    munchExp(stm->EXP);
+  }
   else if (tileStm(stm, move_binop_temp_const_to_temp()))
   {
     T_binOp op = stm->MOVE.src->BINOP.op;
