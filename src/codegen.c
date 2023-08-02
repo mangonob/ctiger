@@ -61,7 +61,7 @@ bool tileExp(T_exp exp, T_exp match)
   switch (match->kind)
   {
   case T_BINOP:
-    return (invalid_enum(match->BINOP.op) || exp->BINOP.op == match->BINOP.op) &&
+    return match_enum(exp->BINOP.op, match->BINOP.op) &&
            tileExp(exp->BINOP.left, match->BINOP.left) &&
            tileExp(exp->BINOP.right, match->BINOP.right);
   case T_MEM:
@@ -90,8 +90,13 @@ static Temp_temp munchExp(T_exp exp)
     emit(AS_Oper(Format("mov `d0, #%d", exp->CONST), L(t, NULL), NULL, NULL));
     return t;
   }
+  else if (exp->kind == T_TEMP)
+  {
+    return exp->TEMP;
+  }
   else
   {
+    // TODO [temp]
     return Temp_newtemp();
   }
 }

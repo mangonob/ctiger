@@ -1,11 +1,10 @@
 #ifndef TILES_H_
 #define TILES_H_
-#include <limits.h>
 #include <stdbool.h>
 #include "tree.h"
-/// As a wildcard of enumuration value, INVALID_ENUM compare with any enum will trade as same value.
-#define INVALID_ENUM (INT_MAX)
-#define invalid_enum(a) ((a) == INVALID_ENUM)
+/// As a wildcard of enumuration value, ANY_ENUM compare with any enum will treat as same value.
+#define ANY_ENUM (-1)
+#define match_enum(a, b) ((a) == ANY_ENUM || (b) == ANY_ENUM || (a) == (b))
 
 T_stm jump_to_name();
 
