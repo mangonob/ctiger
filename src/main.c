@@ -35,7 +35,10 @@ void parse_wrap(FILE *input)
     case F_stringFrag:
       printf("======== String Data ========\n");
       printf("%s:\n", frag->stringg.label->name);
-      printf("%s\n", frag->stringg.str);
+      printf(".asciiz ");
+      for (char *ch = frag->stringg.str; *ch; ++ch)
+        printf("%02x ", *ch);
+      printf("\n");
       break;
     case F_procFrag:
       printf("======== Procedure ========\n");
