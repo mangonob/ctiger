@@ -168,7 +168,7 @@ static void munchStm(T_stm stm)
     switch (op)
     {
     case T_plus:
-      if (c < 0x1000)
+      if (c < 1 << 12)
       {
         emit(AS_Oper(Format("add `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
       }
@@ -180,7 +180,7 @@ static void munchStm(T_stm stm)
       }
       break;
     case T_minus:
-      if (c <= 0x1000)
+      if (c <= 1 << 12)
       {
         emit(AS_Oper(Format("subs `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
       }
@@ -190,14 +190,31 @@ static void munchStm(T_stm stm)
         emit(AS_Move(Format("mov `d0 #%d", c), L(t, NULL), NULL));
         emit(AS_Oper("subs `d0, `s0, `s1", L(d, NULL), L(s, L(t, NULL)), NULL));
       }
+      break;
     case T_mul:
       emit(AS_Oper(Format("mul `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
+      break;
     case T_div:
       emit(AS_Oper(Format("sdiv `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
       break;
-    default:
-      // TODO
-      assert(0);
+    case T_and:
+      emit(AS_Oper(Format("and `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
+      break;
+    case T_or:
+      emit(AS_Oper(Format("orr `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
+      break;
+    case T_lshift:
+      emit(AS_Oper(Format("lsl `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
+      break;
+    case T_rshift:
+      emit(AS_Oper(Format("lsr `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
+      break;
+    case T_arshift:
+      emit(AS_Oper(Format("asr `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
+      break;
+    case T_xor:
+      emit(AS_Oper(Format("eor `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
+      break;
     }
   }
   else if (tileStm(stm, move_const_to_temp()))
@@ -205,6 +222,12 @@ static void munchStm(T_stm stm)
     Temp_temp t = stm->MOVE.dst->TEMP;
     int c = stm->MOVE.src->CONST;
     emit(AS_Move(Format("mov `d0, #%d", c), L(t, NULL), NULL));
+  }
+  else if (tileStm(stm, move_temp_to_temp()))
+  {
+    Temp_temp d = stm->MOVE.dst->TEMP;
+    Temp_temp s = stm->MOVE.src->TEMP;
+    emit(AS_Move("mov `d0, `s0", L(d, NULL), L(s, NULL)));
   }
   else
   {

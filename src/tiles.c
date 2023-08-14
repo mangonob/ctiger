@@ -23,3 +23,11 @@ T_stm move_binop_temp_const_to_temp()
     _move_binop_temp_const_to_temp = T_Move(T_Temp(NULL), T_Binop(ANY_ENUM, T_Temp(NULL), T_Const(0)));
   return _move_binop_temp_const_to_temp;
 }
+
+static T_stm _move_temp_to_temp = NULL;
+T_stm move_temp_to_temp()
+{
+  if (!_move_temp_to_temp)
+    _move_temp_to_temp = T_Move(T_Temp(NULL), T_Temp(NULL));
+  return _move_temp_to_temp;
+}
