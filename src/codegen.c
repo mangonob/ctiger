@@ -128,6 +128,21 @@ char *relop2cond(T_relOp op)
   }
 }
 
+void saveMem(T_exp mem, Temp_temp t)
+{
+  if (tileExp(mem, binop_x_const()) && mem->BINOP.op == T_plus)
+  {
+    int offset = mem->BINOP.right->CONST;
+    Temp_temp base = munchExp(mem->BINOP.left);
+    emit(AS_Oper(Format("str `s0, [`d0 + %d]", offset), L(base, NULL), L(t, NULL), NULL));
+  }
+  else
+  {
+    Temp_temp d = munchExp(mem);
+    emit(AS_Oper("str `s0, [`d0]", L(d, NULL), L(t, NULL), NULL));
+  }
+}
+
 static void munchStm(T_stm stm)
 {
   if (stm->kind == T_LABEL)
@@ -158,11 +173,19 @@ static void munchStm(T_stm stm)
   {
     munchExp(stm->EXP);
   }
-  else if (tileStm(stm, move_binop_temp_const_to_temp()))
+  else if (tileStm(stm, move_from_binop_x_const()))
   {
+    if (stm->MOVE.dst->kind == T_MEM)
+    {
+      Temp_temp t = Temp_newtemp();
+      munchStm(T_Move(T_Temp(t), stm->MOVE.dst));
+      saveMem(stm->MOVE.dst->MEM, t);
+      return;
+    }
+
     T_binOp op = stm->MOVE.src->BINOP.op;
     Temp_temp d = stm->MOVE.dst->TEMP;
-    Temp_temp s = stm->MOVE.src->BINOP.left->TEMP;
+    Temp_temp s = munchExp(stm->MOVE.src->BINOP.left);
     int c = stm->MOVE.src->BINOP.right->CONST;
 
     switch (op)
@@ -223,11 +246,31 @@ static void munchStm(T_stm stm)
     int c = stm->MOVE.src->CONST;
     emit(AS_Move(Format("mov `d0, #%d", c), L(t, NULL), NULL));
   }
-  else if (tileStm(stm, move_temp_to_temp()))
+  else if (stm->kind == T_MOVE)
   {
-    Temp_temp d = stm->MOVE.dst->TEMP;
-    Temp_temp s = stm->MOVE.src->TEMP;
-    emit(AS_Move("mov `d0, `s0", L(d, NULL), L(s, NULL)));
+    if (stm->MOVE.dst->kind == T_TEMP)
+    {
+      Temp_temp s = munchExp(stm->MOVE.src);
+      emit(AS_Oper("mov `d0, `s0", L(stm->MOVE.dst->TEMP, NULL), L(s, NULL), NULL));
+    }
+    else if (stm->MOVE.dst->kind == T_MEM)
+    {
+      Temp_temp t = Temp_newtemp();
+      munchStm(T_Move(T_Temp(t), stm->MOVE.dst));
+      saveMem(stm->MOVE.dst->MEM, t);
+    }
+    else
+      assert(0);
+  }
+  else if (stm->kind == T_EXP)
+  {
+    T_exp exp = stm->EXP;
+    if (exp->kind == T_CALL)
+    {
+      // TODO call exp
+    }
+    else
+      munchExp(exp);
   }
   else
   {

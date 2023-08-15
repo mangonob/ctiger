@@ -31,3 +31,19 @@ T_stm move_temp_to_temp()
     _move_temp_to_temp = T_Move(T_Temp(NULL), T_Temp(NULL));
   return _move_temp_to_temp;
 }
+
+static T_exp _binop_x_const = NULL;
+T_exp binop_x_const()
+{
+  if (!_binop_x_const)
+    _binop_x_const = T_Binop(ANY_ENUM, NULL, T_Const(0));
+  return _binop_x_const;
+}
+
+static T_stm _move_from_binop_x_const = NULL;
+T_stm move_from_binop_x_const()
+{
+  if (!_move_from_binop_x_const)
+    _move_from_binop_x_const = T_Move(NULL, binop_x_const());
+  return _move_from_binop_x_const;
+}
