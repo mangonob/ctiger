@@ -1,4 +1,7 @@
+#include <assert.h>
+#include <stdio.h>
 #include "arm64frame.h"
+#include "utils.h"
 
 const int F_wordSize = 8;
 
@@ -31,6 +34,17 @@ F_accessList F_AccessListReversed(F_accessList list)
   for (; list && list->head; list = list->tail)
     r = F_AccessList(list->head, r);
   return r;
+}
+
+Temp_temp gen_registers[32] = {};
+
+Temp_temp F_XN(int n)
+{
+  assert(n >= 0 && n <= 30);
+
+  if (!gen_registers[n])
+    gen_registers[n] = Temp_newtemp();
+  return gen_registers[n];
 }
 
 static F_access InFrame(int offset)
@@ -124,16 +138,65 @@ static Temp_temp fp = NULL;
 Temp_temp F_FP()
 {
   if (!fp)
-    fp = Temp_newtemp();
+    fp = F_XN(29);
   return fp;
+}
+
+static Temp_temp ra = NULL;
+Temp_temp F_RA()
+{
+  if (!ra)
+    ra = F_XN(30);
+  return ra;
 }
 
 static Temp_temp rv = NULL;
 Temp_temp F_RV()
 {
   if (!rv)
-    rv = Temp_newtemp();
+    rv = F_XN(0);
   return rv;
+}
+
+static Temp_temp sp = NULL;
+Temp_temp F_SP()
+{
+  if (!sp)
+    sp = Temp_newtemp();
+  return sp;
+}
+
+static Temp_temp zero = NULL;
+Temp_temp F_ZERO()
+{
+  if (!zero)
+    zero = Temp_newtemp();
+  return zero;
+}
+
+Temp_tempList F_callersaves()
+{
+  return mkTempList(F_XN(8), F_XN(9), F_XN(10), F_XN(11), F_XN(12), F_XN(13), F_XN(14), F_XN(15), NULL);
+}
+
+Temp_tempList F_calleesaves()
+{
+  return mkTempList(F_XN(19), F_XN(20), F_XN(21), F_XN(22), F_XN(23), F_XN(24), F_XN(25), F_XN(26), F_XN(27), F_XN(28), NULL);
+}
+
+Temp_map F_initialRegisters(F_frame f)
+{
+  Temp_map m = Temp_empty();
+  for (int n = 0; n <= 30; ++n)
+  {
+    char reg_name[4] = {};
+    sprintf(reg_name, "x%d", n);
+    Temp_enter(m, F_XN(n), String(reg_name));
+  }
+  Temp_enter(m, F_ZERO(), "xzr");
+  Temp_enter(m, F_FP(), "fp");
+  Temp_enter(m, F_SP(), "sp");
+  return m;
 }
 
 T_exp F_Exp(F_access acc, T_exp framePtr)

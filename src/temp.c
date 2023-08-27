@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include <stdarg.h>
 #include "temp.h"
 #include "table.h"
 #include "utils.h"
@@ -24,6 +25,27 @@ Temp_tempList Temp_TempList(Temp_temp head, Temp_tempList tail)
   p->head = head;
   p->tail = tail;
   return p;
+}
+
+Temp_tempList mkTempList(Temp_temp head, ...)
+{
+  if (!head)
+    return NULL;
+
+  va_list args;
+  va_start(args, head);
+  Temp_temp p = NULL;
+  Temp_tempList l = Temp_TempList(head, NULL);
+  Temp_tempList curr = l;
+  do
+  {
+    Temp_temp next = va_arg(args, Temp_temp);
+    curr->tail = Temp_TempList(next, NULL);
+    curr = curr->tail;
+  } while (p);
+  va_end(args);
+
+  return l;
 }
 
 static int labels = 0;

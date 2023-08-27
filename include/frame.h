@@ -71,14 +71,13 @@ Temp_temp F_RV();
 Temp_temp F_SP();
 /** Constant zero */
 Temp_temp F_ZERO();
-/** Generic register save by callee */
-Temp_temp F_SN(int i);
-/** Generic register save by caller */
-Temp_temp F_TN(int i);
-/** Arguments */
-Temp_temp F_AN(int i);
-/** retrun values */
-Temp_temp F_VN(int i);
+/** Generic register */
+Temp_temp F_XN(int i);
+
+Temp_tempList F_callersaves();
+Temp_tempList F_calleesaves();
+
+Temp_map F_initialRegisters(F_frame f);
 
 /** The mapping of special registers and thier names */
 Temp_map F_tempMap(void);

@@ -18,6 +18,7 @@ struct Temp_tempList_
   Temp_tempList tail;
 };
 Temp_tempList Temp_TempList(Temp_temp head, Temp_tempList tail);
+Temp_tempList mkTempList(Temp_temp head, ...);
 
 typedef S_symbol Temp_label;
 Temp_label Temp_newLabel();
