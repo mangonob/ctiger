@@ -102,7 +102,7 @@ static Temp_temp munchCall(T_exp call, bool returned)
   }
 
   // TODO parameters
-  emit(AS_Oper(Format("br %s", call->CALL.fun->NAME->name), NULL, NULL, NULL));
+  emit(AS_Oper(Format("bl %s", call->CALL.fun->NAME->name), NULL, NULL, NULL));
   if (returned)
   {
     maybeReturn = Temp_newtemp();
@@ -195,12 +195,12 @@ static void munchStm(T_stm stm)
   }
   else if (tileStm(stm, jump_to_name()))
   {
-    emit(AS_Oper("bl `j0", NULL, NULL, AS_Targets(stm->JUMP.jumps)));
+    emit(AS_Oper("br `j0", NULL, NULL, AS_Targets(stm->JUMP.jumps)));
   }
   else if (stm->kind == T_JUMP)
   {
     Temp_temp t = munchExp(stm->JUMP.exp);
-    emit(AS_Oper("bl `s0", NULL, L(t, NULL), AS_Targets(stm->JUMP.jumps)));
+    emit(AS_Oper("br `s0", NULL, L(t, NULL), AS_Targets(stm->JUMP.jumps)));
   }
   else if (stm->kind == T_CJUMP)
   {
@@ -316,12 +316,6 @@ static void munchStm(T_stm stm)
   {
     emit(AS_Oper("<null>", NULL, NULL, NULL));
   }
-}
-
-static Temp_tempList munchArgs(int i, T_expList args)
-{
-  // TODO
-  return NULL;
 }
 
 AS_instrList F_codegen(F_frame f, T_stmList stmList)
