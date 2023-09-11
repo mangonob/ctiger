@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
   if (argc == 1)
   {
     FILE *test = NULL;
-    test = fopen("testcases/hello.tig", "r");
+    test = fopen("testcases/queens.tig", "r");
     parse_wrap(test ? test : stdin);
   }
   else if (argc == 2)

@@ -34,15 +34,15 @@ Temp_tempList mkTempList(Temp_temp head, ...)
 
   va_list args;
   va_start(args, head);
-  Temp_temp p = NULL;
+  Temp_temp next = va_arg(args, Temp_temp);
   Temp_tempList l = Temp_TempList(head, NULL);
   Temp_tempList curr = l;
-  do
+  while (next)
   {
-    Temp_temp next = va_arg(args, Temp_temp);
     curr->tail = Temp_TempList(next, NULL);
     curr = curr->tail;
-  } while (p);
+    next = va_arg(args, Temp_temp);
+  }
   va_end(args);
 
   return l;

@@ -82,6 +82,44 @@ Temp_tempList L(Temp_temp head, Temp_tempList tail)
   return Temp_TempList(head, tail);
 }
 
+static Temp_temp munchCall(T_exp call, bool returned)
+{
+  assert(call->kind == T_CALL);
+  assert(call->CALL.fun->kind == T_NAME);
+
+  Temp_temp maybeReturn = NULL;
+  Temp_tempList saved = NULL;
+  Temp_tempList reversed = NULL;
+
+  // 保存寄存器
+  for (Temp_tempList callees = F_callersaves(); callees; callees = callees->tail)
+  {
+    Temp_temp r = callees->head;
+    Temp_temp t = Temp_newtemp();
+    saved = Temp_TempList(t, saved);
+    reversed = Temp_TempList(callees->head, reversed);
+    emit(AS_Move("mov `d0, `s0", L(t, NULL), L(r, NULL)));
+  }
+
+  // TODO parameters
+  emit(AS_Oper(Format("br %s", call->CALL.fun->NAME->name), NULL, NULL, NULL));
+  if (returned)
+  {
+    maybeReturn = Temp_newtemp();
+    emit(AS_Oper("mov `d0, `s0", L(maybeReturn, NULL), L(F_RV(), NULL), NULL));
+  }
+
+  // 恢复寄存器
+  for (; reversed && saved; reversed = reversed->tail, saved = saved->tail)
+  {
+    Temp_temp r = reversed->head;
+    Temp_temp t = saved->head;
+    emit(AS_Move("mov `d0, `s0", L(r, NULL), L(t, NULL)));
+  }
+
+  return maybeReturn;
+}
+
 static Temp_temp munchExp(T_exp exp)
 {
   if (exp->kind == T_CONST)
@@ -93,6 +131,10 @@ static Temp_temp munchExp(T_exp exp)
   else if (exp->kind == T_TEMP)
   {
     return exp->TEMP;
+  }
+  else if (exp->kind == T_CALL)
+  {
+    return munchCall(exp, true);
   }
   else
   {
@@ -266,9 +308,7 @@ static void munchStm(T_stm stm)
   {
     T_exp exp = stm->EXP;
     if (exp->kind == T_CALL)
-    {
-      // TODO call exp
-    }
+      munchCall(exp, false);
     else
       munchExp(exp);
   }
