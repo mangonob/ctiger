@@ -1,7 +1,9 @@
 #include <assert.h>
 #include <stdbool.h>
+#include <stdarg.h>
 #include "codegen.h"
 #include "tiles.h"
+#define L(...) mkTempList(__VA_ARGS__, NULL)
 
 static AS_instrList iList = NULL;
 static AS_instrList last = NULL;
@@ -16,6 +18,7 @@ static void emit(AS_instr i)
 }
 
 bool tileExp(T_exp exp, T_exp match);
+/** match statement tile */
 bool tileStm(T_stm stm, T_stm match)
 {
   if (match == NULL)
@@ -47,6 +50,7 @@ bool tileStm(T_stm stm, T_stm match)
   }
 }
 
+/** match expression tile */
 bool tileExp(T_exp exp, T_exp match)
 {
   if (match == NULL)
@@ -77,11 +81,7 @@ bool tileExp(T_exp exp, T_exp match)
   return false;
 }
 
-Temp_tempList L(Temp_temp head, Temp_tempList tail)
-{
-  return Temp_TempList(head, tail);
-}
-
+static Temp_temp munchExp(T_exp exp);
 static Temp_temp munchCall(T_exp call, bool returned)
 {
   assert(call->kind == T_CALL);
@@ -98,15 +98,37 @@ static Temp_temp munchCall(T_exp call, bool returned)
     Temp_temp t = Temp_newtemp();
     saved = Temp_TempList(t, saved);
     reversed = Temp_TempList(callees->head, reversed);
-    emit(AS_Move("mov `d0, `s0", L(t, NULL), L(r, NULL)));
+    emit(AS_Move("mov `d0, `s0", L(t), L(r)));
   }
 
-  // TODO parameters
+  int i = 0;
+  for (T_expList params = call->CALL.args; params; params = params->tail)
+  {
+    T_exp param = params->head;
+    Temp_temp exp = munchExp(param);
+
+    if (i <= 7)
+    {
+      emit(AS_Move("mov `d0, `s0", L(F_XN(i)), L(exp)));
+    }
+    else
+    {
+      int offset = F_wordSize * (i - 8);
+
+      if (offset == 0)
+        emit(AS_Oper("str `s0, [`s1]", NULL, L(exp, F_SP(), NULL), NULL));
+      else
+        emit(AS_Oper(Format("str `s0, [`s1, #%d]", offset), NULL, L(exp, F_SP(), NULL), NULL));
+    }
+
+    ++i;
+  }
+
   emit(AS_Oper(Format("bl %s", call->CALL.fun->NAME->name), NULL, NULL, NULL));
   if (returned)
   {
     maybeReturn = Temp_newtemp();
-    emit(AS_Oper("mov `d0, `s0", L(maybeReturn, NULL), L(F_RV(), NULL), NULL));
+    emit(AS_Oper("mov `d0, `s0", L(maybeReturn), L(F_RV()), NULL));
   }
 
   // 恢复寄存器
@@ -114,10 +136,117 @@ static Temp_temp munchCall(T_exp call, bool returned)
   {
     Temp_temp r = reversed->head;
     Temp_temp t = saved->head;
-    emit(AS_Move("mov `d0, `s0", L(r, NULL), L(t, NULL)));
+    emit(AS_Move("mov `d0, `s0", L(r), L(t)));
   }
 
   return maybeReturn;
+}
+
+static void munchBinop(Temp_temp d, T_exp exp)
+{
+  assert(exp->kind == T_BINOP);
+
+  Temp_tempList dl = L(d);
+
+  if (tileExp(exp, binop_x_const()))
+  {
+    Temp_temp s = munchExp(exp->BINOP.left);
+    Temp_tempList sl = L(s);
+    int c = exp->BINOP.right->CONST;
+
+    switch (exp->BINOP.op)
+    {
+    case T_plus:
+      if (c < 1 << 12)
+      {
+        emit(AS_Oper(Format("add `d0, `s0, #%d", c), dl, sl, NULL));
+      }
+      else
+      {
+        Temp_temp t = Temp_newtemp();
+        emit(AS_Move(Format("mov `d0 #%d", c), L(t), NULL));
+        emit(AS_Oper("add `d0, `s0, `s1", dl, L(s, t), NULL));
+      }
+      break;
+    case T_minus:
+      if (c <= 1 << 12)
+      {
+        emit(AS_Oper(Format("subs `d0, `s0, #%d", c), dl, sl, NULL));
+      }
+      else
+      {
+        Temp_temp t = Temp_newtemp();
+        emit(AS_Move(Format("mov `d0 #%d", c), L(t), NULL));
+        emit(AS_Oper("subs `d0, `s0, `s1", dl, L(s, t), NULL));
+      }
+      break;
+    case T_mul:
+      emit(AS_Oper(Format("mul `d0, `s0, #%d", c), dl, sl, NULL));
+      break;
+    case T_div:
+      emit(AS_Oper(Format("sdiv `d0, `s0, #%d", c), dl, sl, NULL));
+      break;
+    case T_and:
+      emit(AS_Oper(Format("and `d0, `s0, #%d", c), dl, sl, NULL));
+      break;
+    case T_or:
+      emit(AS_Oper(Format("orr `d0, `s0, #%d", c), dl, sl, NULL));
+      break;
+    case T_lshift:
+      emit(AS_Oper(Format("lsl `d0, `s0, #%d", c), dl, sl, NULL));
+      break;
+    case T_rshift:
+      emit(AS_Oper(Format("lsr `d0, `s0, #%d", c), dl, sl, NULL));
+      break;
+    case T_arshift:
+      emit(AS_Oper(Format("asr `d0, `s0, #%d", c), dl, sl, NULL));
+      break;
+    case T_xor:
+      emit(AS_Oper(Format("eor `d0, `s0, #%d", c), dl, sl, NULL));
+      break;
+    }
+  }
+  else
+  {
+    Temp_temp l = munchExp(exp->BINOP.left);
+    Temp_temp r = munchExp(exp->BINOP.right);
+    Temp_tempList dl = L(d);
+    Temp_tempList sl = L(l, r);
+
+    switch (exp->BINOP.op)
+    {
+    case T_plus:
+      emit(AS_Oper("add `d0, `s0, `s1", dl, sl, NULL));
+      break;
+    case T_minus:
+      emit(AS_Oper("subs `d0, `s0, `s1", dl, sl, NULL));
+      break;
+    case T_mul:
+      emit(AS_Oper("mul `d0, `s0, `s1", dl, sl, NULL));
+      break;
+    case T_div:
+      emit(AS_Oper("sdiv `d0, `s0, `s1", dl, sl, NULL));
+      break;
+    case T_and:
+      emit(AS_Oper("and `d0, `s0, `s1", dl, sl, NULL));
+      break;
+    case T_or:
+      emit(AS_Oper("orr `d0, `s0, `s1", dl, sl, NULL));
+      break;
+    case T_lshift:
+      emit(AS_Oper("lsl `d0, `s0, `s1", dl, sl, NULL));
+      break;
+    case T_rshift:
+      emit(AS_Oper("lsr `d0, `s0, `s1", dl, sl, NULL));
+      break;
+    case T_arshift:
+      emit(AS_Oper("asr `d0, `s0, `s1", dl, sl, NULL));
+      break;
+    case T_xor:
+      emit(AS_Oper("eor `d0, `s0, `s1", dl, sl, NULL));
+      break;
+    }
+  }
 }
 
 static Temp_temp munchExp(T_exp exp)
@@ -125,7 +254,7 @@ static Temp_temp munchExp(T_exp exp)
   if (exp->kind == T_CONST)
   {
     Temp_temp t = Temp_newtemp();
-    emit(AS_Oper(Format("mov `d0, #%d", exp->CONST), L(t, NULL), NULL, NULL));
+    emit(AS_Oper(Format("mov `d0, #%d", exp->CONST), L(t), NULL, NULL));
     return t;
   }
   else if (exp->kind == T_TEMP)
@@ -135,6 +264,21 @@ static Temp_temp munchExp(T_exp exp)
   else if (exp->kind == T_CALL)
   {
     return munchCall(exp, true);
+  }
+  else if (exp->kind == T_BINOP)
+  {
+    Temp_temp t = Temp_newtemp();
+    munchBinop(t, exp);
+    return t;
+  }
+  else if (exp->kind == T_MEM)
+  {
+    // right value
+    // todo: ldr rt, [base, offset]
+    Temp_temp t = Temp_newtemp();
+    Temp_temp addr = munchExp(exp->MEM);
+    emit(AS_Oper("ldr `s0, [`s1]", L(t, addr), NULL, NULL));
+    return t;
   }
   else
   {
@@ -176,12 +320,12 @@ void saveMem(T_exp mem, Temp_temp t)
   {
     int offset = mem->BINOP.right->CONST;
     Temp_temp base = munchExp(mem->BINOP.left);
-    emit(AS_Oper(Format("str `s0, [`d0 + %d]", offset), L(base, NULL), L(t, NULL), NULL));
+    emit(AS_Oper(Format("str `s0, [`d0 + %d]", offset), L(base), L(t), NULL));
   }
   else
   {
     Temp_temp d = munchExp(mem);
-    emit(AS_Oper("str `s0, [`d0]", L(d, NULL), L(t, NULL), NULL));
+    emit(AS_Oper("str `s0, [`d0]", L(d), L(t), NULL));
   }
 }
 
@@ -195,18 +339,18 @@ static void munchStm(T_stm stm)
   }
   else if (tileStm(stm, jump_to_name()))
   {
-    emit(AS_Oper("br `j0", NULL, NULL, AS_Targets(stm->JUMP.jumps)));
+    emit(AS_Oper("b `j0", NULL, NULL, AS_Targets(stm->JUMP.jumps)));
   }
   else if (stm->kind == T_JUMP)
   {
     Temp_temp t = munchExp(stm->JUMP.exp);
-    emit(AS_Oper("br `s0", NULL, L(t, NULL), AS_Targets(stm->JUMP.jumps)));
+    emit(AS_Oper("br `s0", NULL, L(t), AS_Targets(stm->JUMP.jumps)));
   }
   else if (stm->kind == T_CJUMP)
   {
     Temp_temp l = munchExp(stm->CJUMP.lhs);
     Temp_temp r = munchExp(stm->CJUMP.rhs);
-    emit(AS_Oper("cmp `s1, `s0", NULL, L(r, L(l, NULL)), NULL));
+    emit(AS_Oper("cmp `s1, `s0", NULL, L(r, l), NULL));
     char *cond = relop2cond(stm->CJUMP.op);
     Temp_labelList tl = Temp_LabelList(stm->CJUMP.trueLabel, NULL);
     emit(AS_Oper(Format("b%s `j0", cond), NULL, NULL, AS_Targets(tl)));
@@ -224,76 +368,25 @@ static void munchStm(T_stm stm)
       saveMem(stm->MOVE.dst->MEM, t);
       return;
     }
-
-    T_binOp op = stm->MOVE.src->BINOP.op;
-    Temp_temp d = stm->MOVE.dst->TEMP;
-    Temp_temp s = munchExp(stm->MOVE.src->BINOP.left);
-    int c = stm->MOVE.src->BINOP.right->CONST;
-
-    switch (op)
+    else if (stm->MOVE.dst->kind == T_TEMP)
     {
-    case T_plus:
-      if (c < 1 << 12)
-      {
-        emit(AS_Oper(Format("add `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
-      }
-      else
-      {
-        Temp_temp t = Temp_newtemp();
-        emit(AS_Move(Format("mov `d0 #%d", c), L(t, NULL), NULL));
-        emit(AS_Oper("add `d0, `s0, `s1", L(d, NULL), L(s, L(t, NULL)), NULL));
-      }
-      break;
-    case T_minus:
-      if (c <= 1 << 12)
-      {
-        emit(AS_Oper(Format("subs `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
-      }
-      else
-      {
-        Temp_temp t = Temp_newtemp();
-        emit(AS_Move(Format("mov `d0 #%d", c), L(t, NULL), NULL));
-        emit(AS_Oper("subs `d0, `s0, `s1", L(d, NULL), L(s, L(t, NULL)), NULL));
-      }
-      break;
-    case T_mul:
-      emit(AS_Oper(Format("mul `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
-      break;
-    case T_div:
-      emit(AS_Oper(Format("sdiv `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
-      break;
-    case T_and:
-      emit(AS_Oper(Format("and `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
-      break;
-    case T_or:
-      emit(AS_Oper(Format("orr `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
-      break;
-    case T_lshift:
-      emit(AS_Oper(Format("lsl `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
-      break;
-    case T_rshift:
-      emit(AS_Oper(Format("lsr `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
-      break;
-    case T_arshift:
-      emit(AS_Oper(Format("asr `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
-      break;
-    case T_xor:
-      emit(AS_Oper(Format("eor `d0, `s0, #%d", c), L(d, NULL), L(s, NULL), NULL));
-      break;
+      munchBinop(stm->MOVE.dst->TEMP, stm->MOVE.src);
     }
+    else
+      assert(0 && "bad move dst");
   }
   else if (tileStm(stm, move_const_to_temp()))
   {
     Temp_temp t = stm->MOVE.dst->TEMP;
     int c = stm->MOVE.src->CONST;
-    emit(AS_Move(Format("mov `d0, #%d", c), L(t, NULL), NULL));
+    emit(AS_Move(Format("mov `d0, #%d", c), L(t), NULL));
   }
   else if (stm->kind == T_MOVE)
   {
     if (stm->MOVE.dst->kind == T_TEMP)
     {
       Temp_temp s = munchExp(stm->MOVE.src);
-      emit(AS_Oper("mov `d0, `s0", L(stm->MOVE.dst->TEMP, NULL), L(s, NULL), NULL));
+      emit(AS_Oper("mov `d0, `s0", L(stm->MOVE.dst->TEMP), L(s), NULL));
     }
     else if (stm->MOVE.dst->kind == T_MEM)
     {
@@ -314,7 +407,7 @@ static void munchStm(T_stm stm)
   }
   else
   {
-    emit(AS_Oper("<null>", NULL, NULL, NULL));
+    emit(AS_Oper("<unknown>", NULL, NULL, NULL));
   }
 }
 

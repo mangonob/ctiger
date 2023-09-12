@@ -54,7 +54,7 @@ void parse_wrap(FILE *input)
         T_stmList trace = C_traceSchedule(block);
 #ifdef CODEGEN
         AS_instrList iList = F_codegen(frag->proc.frame, trace);
-        AS_printInstrList(stdout, iList, Temp_empty());
+        AS_printInstrList(stdout, iList, F_initialRegisters(frag->proc.frame));
 #else
         printStmList(trace, 0);
 #endif
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
   if (argc == 1)
   {
     FILE *test = NULL;
-    test = fopen("testcases/queens.tig", "r");
+    test = fopen("testcases/hello.tig", "r");
     parse_wrap(test ? test : stdin);
   }
   else if (argc == 2)

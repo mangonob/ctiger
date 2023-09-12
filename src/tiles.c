@@ -40,10 +40,26 @@ T_exp binop_x_const()
   return _binop_x_const;
 }
 
+static T_exp _binop_const_const = NULL;
+T_exp binop_const_const()
+{
+  if (!_binop_const_const)
+    _binop_const_const = T_Binop(ANY_ENUM, T_Const(0), T_Const(0));
+  return _binop_const_const;
+}
+
 static T_stm _move_from_binop_x_const = NULL;
 T_stm move_from_binop_x_const()
 {
   if (!_move_from_binop_x_const)
     _move_from_binop_x_const = T_Move(NULL, binop_x_const());
   return _move_from_binop_x_const;
+}
+
+static T_exp _binop_temp_temp = NULL;
+T_exp binop_temp_temp()
+{
+  if (!_binop_temp_temp)
+    _binop_temp_temp = T_Binop(ANY_ENUM, T_Temp(NULL), T_Temp(NULL));
+  return _binop_temp_temp;
 }
