@@ -277,7 +277,7 @@ static Temp_temp munchExp(T_exp exp)
     // todo: ldr rt, [base, offset]
     Temp_temp t = Temp_newtemp();
     Temp_temp addr = munchExp(exp->MEM);
-    emit(AS_Oper("ldr `s0, [`s1]", L(t, addr), NULL, NULL));
+    emit(AS_Oper("ldr `s0, [`s1]", NULL, L(t, addr), NULL));
     return t;
   }
   else
@@ -320,7 +320,13 @@ void saveMem(T_exp mem, Temp_temp t)
   {
     int offset = mem->BINOP.right->CONST;
     Temp_temp base = munchExp(mem->BINOP.left);
-    emit(AS_Oper(Format("str `s0, [`d0 + %d]", offset), L(base), L(t), NULL));
+
+    if (offset > 0)
+      emit(AS_Oper(Format("str `s0, [`s1, %d]", offset), NULL, L(t, base), NULL));
+    else if (offset < 0)
+      emit(AS_Oper(Format("str `s0, [`s1, %d]", offset), NULL, L(t, base), NULL));
+    else
+      emit(AS_Oper("str `s0, [`s1]", NULL, L(t, base), NULL));
   }
   else
   {
@@ -383,19 +389,35 @@ static void munchStm(T_stm stm)
   }
   else if (stm->kind == T_MOVE)
   {
-    if (stm->MOVE.dst->kind == T_TEMP)
-    {
-      Temp_temp s = munchExp(stm->MOVE.src);
-      emit(AS_Move("mov `d0, `s0", L(stm->MOVE.dst->TEMP), L(s)));
-    }
-    else if (stm->MOVE.dst->kind == T_MEM)
+    assert(stm->MOVE.dst->kind == T_TEMP || stm->MOVE.dst->kind == T_MEM);
+
+    if (stm->MOVE.dst->kind == T_MEM)
     {
       Temp_temp t = Temp_newtemp();
       munchStm(T_Move(T_Temp(t), stm->MOVE.dst));
       saveMem(stm->MOVE.dst->MEM, t);
     }
     else
-      assert(0);
+    {
+      Temp_temp d = stm->MOVE.dst->TEMP;
+      if (tileStm(stm, move_const_offset_mem_to_x()))
+      {
+        Temp_temp base = stm->MOVE.src->MEM->BINOP.left->TEMP;
+        int offset = stm->MOVE.src->MEM->BINOP.right->CONST;
+
+        if (offset > 0)
+          emit(AS_Oper(Format("ldr `d0, [`s0, #%d]", offset), L(d), L(base), NULL));
+        else if (offset < 0)
+          emit(AS_Oper(Format("ldur `d0, [`s0, #%d]", offset), L(d), L(base), NULL));
+        else
+          emit(AS_Oper("ldr `d0, [`s0]", L(d), L(base), NULL));
+      }
+      else
+      {
+        Temp_temp s = munchExp(stm->MOVE.src);
+        emit(AS_Move("mov `d0, `s0", L(d), L(s)));
+      }
+    }
   }
   else if (stm->kind == T_EXP)
   {

@@ -214,21 +214,48 @@ T_exp F_externalCall(string s, T_expList args)
 
 T_stm F_procEntryExit1(F_frame frame, T_stm stm)
 {
-  // TODO 参数复制
+  // 参数复制
+  T_stm copyFormals = NULL;
+  int i = 0;
 
+  for (F_accessList formals = F_formals(frame); formals; formals = formals->tail)
+  {
+    F_access acc = formals->head;
+    T_stm mov = NULL;
+    T_exp d = F_Exp(acc, T_Temp(F_FP()));
+
+    if (i <= 7)
+      mov = T_Move(d, T_Temp(F_XN(i)));
+    else
+      mov = T_Move(d, T_Mem(T_Binop(T_plus, T_Temp(F_FP()), T_Const(F_wordSize * (8 - i)))));
+    copyFormals = copyFormals ? T_Seq(copyFormals, mov) : mov;
+
+    ++i;
+  }
+
+  if (copyFormals)
+    stm = T_Seq(copyFormals, stm);
+
+  // 保存Callee寄存器
   Temp_tempList callee = F_calleesaves();
   Temp_tempList reversed = NULL;
   Temp_tempList saved = NULL;
 
+  T_stm saveStm = NULL;
   for (; callee; callee = callee->tail)
   {
     Temp_temp r = callee->head;
     reversed = Temp_TempList(r, reversed);
     Temp_temp t = Temp_newtemp();
     saved = Temp_TempList(t, saved);
-    stm = T_Seq(T_Move(T_Temp(t), T_Temp(r)), stm);
+    T_stm mov = T_Move(T_Temp(t), T_Temp(r));
+    saveStm = saveStm ? T_Seq(saveStm, mov) : mov;
   }
 
+  if (saveStm)
+    stm = T_Seq(saveStm, stm);
+
+  // 恢复Callee寄存器
   for (; saved; saved = saved->tail, reversed = reversed->tail)
   {
     Temp_temp t = saved->head;
@@ -237,4 +264,19 @@ T_stm F_procEntryExit1(F_frame frame, T_stm stm)
   }
 
   return stm;
+}
+
+AS_instrList F_procEntryExit2(AS_instrList body)
+{
+  // TODO
+  return body;
+}
+
+AS_proc F_procEntryExit3(F_frame frame, AS_instrList body)
+{
+  // TODO
+  return AS_Proc(
+      Format("# PROCEDURE %s BEGIN", frame->name->name),
+      body,
+      Format("# PROCEDURE %s END", frame->name->name));
 }

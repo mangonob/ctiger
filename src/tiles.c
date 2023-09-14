@@ -32,6 +32,14 @@ T_stm move_temp_to_temp()
   return _move_temp_to_temp;
 }
 
+static T_stm _move_const_offset_mem_to_x = NULL;
+T_stm move_const_offset_mem_to_x()
+{
+  if (!_move_const_offset_mem_to_x)
+    _move_const_offset_mem_to_x = T_Move(NULL, T_Mem(T_Binop(T_plus, T_Temp(NULL), T_Const(0))));
+  return _move_const_offset_mem_to_x;
+}
+
 static T_exp _binop_x_const = NULL;
 T_exp binop_x_const()
 {

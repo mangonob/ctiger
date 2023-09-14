@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "tree.h"
 #include "symbol.h"
+#include "assem.h"
 
 typedef struct F_frame_ *F_frame;
 typedef struct F_access_ *F_access;
@@ -96,5 +97,7 @@ T_exp F_Exp(F_access acc, T_exp framePtr);
 T_exp F_externalCall(string s, T_expList args);
 
 T_stm F_procEntryExit1(F_frame frame, T_stm stm);
+AS_instrList F_procEntryExit2(AS_instrList body);
+AS_proc F_procEntryExit3(F_frame frame, AS_instrList body);
 
 #endif

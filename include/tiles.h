@@ -14,6 +14,8 @@ T_stm move_binop_temp_const_to_temp();
 
 T_stm move_from_binop_x_const();
 
+T_stm move_const_offset_mem_to_x();
+
 T_exp binop_x_const();
 
 T_exp binop_temp_temp();
