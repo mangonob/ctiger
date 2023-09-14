@@ -274,9 +274,8 @@ AS_instrList F_procEntryExit2(AS_instrList body)
 
 AS_proc F_procEntryExit3(F_frame frame, AS_instrList body)
 {
-  // TODO
   return AS_Proc(
-      Format("# PROCEDURE %s BEGIN", frame->name->name),
-      body,
-      Format("# PROCEDURE %s END", frame->name->name));
+      Format("; PROCEDURE %s BEGIN", frame->name->name),
+      AS_InstrList(AS_Label(Format("%s:", Temp_labelstring(frame->name)), frame->name), body),
+      Format("; PROCEDURE %s END", frame->name->name));
 }

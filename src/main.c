@@ -20,7 +20,36 @@
 extern int yyparse(FILE *input);
 extern A_exp tgroot;
 
-void parse_wrap(FILE *input)
+void doProc(FILE *out, F_frame frame, T_stm body)
+{
+  T_stmList linear = C_linearize(body);
+  C_block block = C_basicBlocks(linear);
+  T_stmList trace = C_traceSchedule(block);
+  AS_instrList iList = F_codegen(frame, trace);
+
+  iList = F_procEntryExit2(iList);
+  AS_proc proc = F_procEntryExit3(frame, iList);
+
+  fprintf(out, "%s\n", proc->prolog);
+  AS_printInstrList(out, proc->body, F_initialRegisters(frame));
+  fprintf(out, "%s\n", proc->epilog);
+}
+
+void doStr(FILE *out, string str, Temp_label label)
+{
+  fprintf(out, "%s:\n", label->name);
+  fprintf(out, ".asciiz ");
+  for (char *ch = str; *ch; ++ch)
+  {
+    fprintf(out, "%02x", *ch);
+    if (*(ch + 1))
+      fprintf(out, " ");
+    else
+      fprintf(out, "\n");
+  }
+}
+
+void parse_wrap(FILE *input, FILE *out)
 {
   if (yyparse(input))
     exit(1);
@@ -33,42 +62,10 @@ void parse_wrap(FILE *input)
     switch (frag->kind)
     {
     case F_stringFrag:
-      printf("======== String Data ========\n");
-      printf("%s:\n", frag->stringg.label->name);
-      printf(".asciiz ");
-      for (char *ch = frag->stringg.str; *ch; ++ch)
-        printf("%02x ", *ch);
-      printf("\n");
+      doStr(out, frag->stringg.str, frag->stringg.label);
       break;
     case F_procFrag:
-      printf("======== Procedure ========\n");
-      printf("%s:\n", F_name(frag->proc.frame)->name);
-      if (0)
-        printStmList(T_StmList(frag->proc.body, NULL), 0);
-      else
-      {
-        T_stmList linear = C_linearize(frag->proc.body);
-        C_block block = C_basicBlocks(linear);
-
-#ifdef TRACE
-        T_stmList trace = C_traceSchedule(block);
-#ifdef CODEGEN
-        AS_instrList iList = F_codegen(frag->proc.frame, trace);
-        AS_printInstrList(stdout, iList, F_initialRegisters(frag->proc.frame));
-#else
-        printStmList(trace, 0);
-#endif
-#else
-        C_stmListList stmLists = block.stmLists;
-        for (; stmLists; stmLists = stmLists->tail)
-        {
-          printStmList(stmLists->head, 0);
-          // separate line of block
-          if (stmLists->tail)
-            printf("--------------------------------\n");
-        }
-#endif
-      }
+      doProc(out, frag->proc.frame, frag->proc.body);
       break;
     }
   }
@@ -86,7 +83,7 @@ int main(int argc, char *argv[])
   {
     FILE *test = NULL;
     test = fopen("testcases/hello.tig", "r");
-    parse_wrap(test ? test : stdin);
+    parse_wrap(test ? test : stdin, stdout);
   }
   else if (argc == 2)
   {
@@ -97,13 +94,11 @@ int main(int argc, char *argv[])
       fprintf(stderr, "cannot open file %s\n", filename);
       exit(1);
     }
-    parse_wrap(input);
+    parse_wrap(input, stdout);
     fclose(input);
   }
   else
-  {
     usage();
-  }
 
   exit(0);
 }
