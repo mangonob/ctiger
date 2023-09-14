@@ -1,6 +1,7 @@
 .DS_Store
 build/
 *.output
+*.s
 
 # ignore cmake
 CMakeLists.txt.user
