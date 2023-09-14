@@ -214,6 +214,27 @@ T_exp F_externalCall(string s, T_expList args)
 
 T_stm F_procEntryExit1(F_frame frame, T_stm stm)
 {
-  // TODO
+  // TODO 参数复制
+
+  Temp_tempList callee = F_calleesaves();
+  Temp_tempList reversed = NULL;
+  Temp_tempList saved = NULL;
+
+  for (; callee; callee = callee->tail)
+  {
+    Temp_temp r = callee->head;
+    reversed = Temp_TempList(r, reversed);
+    Temp_temp t = Temp_newtemp();
+    saved = Temp_TempList(t, saved);
+    stm = T_Seq(T_Move(T_Temp(t), T_Temp(r)), stm);
+  }
+
+  for (; saved; saved = saved->tail, reversed = reversed->tail)
+  {
+    Temp_temp t = saved->head;
+    Temp_temp r = reversed->head;
+    stm = T_Seq(stm, T_Move(T_Temp(r), T_Temp(t)));
+  }
+
   return stm;
 }

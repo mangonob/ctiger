@@ -168,8 +168,8 @@ F_fragList Tr_getResult()
 void Tr_procEntryExit(Tr_level level, Tr_exp body, Tr_accessList accessList)
 {
   T_stm stm = T_Move(T_Temp(F_RV()), unEx(body));
+  stm = F_procEntryExit1(level->frame, stm);
   frag_list = F_FragList(F_ProcFrag(stm, level->frame), frag_list);
-  F_procEntryExit1(level->frame, stm);
 }
 
 static patchList PatchList(Temp_label *head, patchList tail)

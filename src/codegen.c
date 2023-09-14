@@ -386,7 +386,7 @@ static void munchStm(T_stm stm)
     if (stm->MOVE.dst->kind == T_TEMP)
     {
       Temp_temp s = munchExp(stm->MOVE.src);
-      emit(AS_Oper("mov `d0, `s0", L(stm->MOVE.dst->TEMP), L(s), NULL));
+      emit(AS_Move("mov `d0, `s0", L(stm->MOVE.dst->TEMP), L(s)));
     }
     else if (stm->MOVE.dst->kind == T_MEM)
     {
