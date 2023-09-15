@@ -50,28 +50,6 @@ void doStr(FILE *out, string str, Temp_label label)
   }
 }
 
-void parse_wrap(FILE *input, FILE *out)
-{
-  if (yyparse(input))
-    exit(1);
-
-  Esc_findEscape(tgroot);
-  F_fragList frag_list = SEM_transProg(tgroot);
-  for (; frag_list; frag_list = frag_list->tail)
-  {
-    F_frag frag = frag_list->head;
-    switch (frag->kind)
-    {
-    case F_stringFrag:
-      doStr(out, frag->stringg.str, frag->stringg.label);
-      break;
-    case F_procFrag:
-      doProc(out, frag->proc.frame, frag->proc.body);
-      break;
-    }
-  }
-}
-
 void usage()
 {
   printf("usage: tigerc [filename]\n");
@@ -123,7 +101,24 @@ int main(int argc, char *argv[])
     output = stdout;
   }
 
-  parse_wrap(input, output);
+  if (yyparse(input))
+    exit(1);
+
+  Esc_findEscape(tgroot);
+  F_fragList frag_list = SEM_transProg(tgroot);
+  for (; frag_list; frag_list = frag_list->tail)
+  {
+    F_frag frag = frag_list->head;
+    switch (frag->kind)
+    {
+    case F_stringFrag:
+      doStr(output, frag->stringg.str, frag->stringg.label);
+      break;
+    case F_procFrag:
+      doProc(output, frag->proc.frame, frag->proc.body);
+      break;
+    }
+  }
 
   if (input != stdin)
     fclose(input);
