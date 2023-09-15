@@ -195,5 +195,5 @@ id:         ID                                  { $$ = A_Id(LOC(@1), S_Symbol($1
 %%
 
 void yyerror(char *s) {
-    printf("parser error: %s at line: %d, column: %d\n", s, yylloc.first_line, yylloc.first_column);
+    fprintf(stderr, "parser error: %s at line: %d, column: %d\n", s, yylloc.first_line, yylloc.first_column);
 }

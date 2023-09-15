@@ -10,6 +10,7 @@
 #include "types.h"
 #include "escape.h"
 #include "canon.h"
+#include "argv.h"
 #define TRACE
 #define CODEGEN
 
@@ -73,32 +74,61 @@ void parse_wrap(FILE *input, FILE *out)
 
 void usage()
 {
-  printf("usage: tigerc filename\n");
+  printf("usage: tigerc [filename]\n");
   exit(0);
 }
 
 int main(int argc, char *argv[])
 {
-  if (argc == 1)
+  Arg_result argresult = parse_argv(argc, argv);
+
+  if (C_StrLength(argresult->nonamed) > 1)
+    usage();
+
+  bool has_input = argresult->nonamed;
+  string input_filename = has_input ? argresult->nonamed->head : NULL;
+  string output_filename = S_lookup(argresult->named, S_Symbol("o"));
+  output_filename = output_filename ? output_filename : S_lookup(argresult->named, S_Symbol("output"));
+
+  FILE *input = NULL;
+  FILE *output = NULL;
+
+  if (input_filename)
   {
-    FILE *test = NULL;
-    test = fopen("testcases/hello.tig", "r");
-    parse_wrap(test ? test : stdin, stdout);
-  }
-  else if (argc == 2)
-  {
-    char *filename = argv[1];
-    FILE *input = fopen(filename, "r");
-    if (!input)
+    FILE *f = fopen(input_filename, "r");
+    if (!f)
     {
-      fprintf(stderr, "cannot open file %s\n", filename);
+      fprintf(stderr, "cannot open file %s.", input_filename);
       exit(1);
     }
-    parse_wrap(input, stdout);
-    fclose(input);
+    input = f;
   }
   else
-    usage();
+  {
+    input = stdin;
+  }
+
+  if (output_filename)
+  {
+    FILE *f = fopen(output_filename, "w+");
+    if (!f)
+    {
+      fprintf(stderr, "cannot open file %s.", output_filename);
+      exit(1);
+    }
+    output = f;
+  }
+  else
+  {
+    output = stdout;
+  }
+
+  parse_wrap(input, output);
+
+  if (input != stdin)
+    fclose(input);
+  if (output != stdout)
+    fclose(output);
 
   exit(0);
 }

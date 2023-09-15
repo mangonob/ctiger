@@ -96,7 +96,7 @@ ID          [a-zA-Z_][a-zA-Z0-9_]*
 ":="                        return ASSIGN;
 {DIGIT}+                    { sscanf(yytext, "%ld", &yylval.ival); return INT; }
 {ID}                        { yylval.idval = strdup(yytext); return ID; }
-.                           { printf("bad token %s\n", yytext); exit(1); }
+.                           { fprintf(stderr, "bad token %s\n", yytext); exit(1); }
 <<EOF>>                     return EOF;
 
 %%

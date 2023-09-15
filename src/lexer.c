@@ -1155,7 +1155,7 @@ YY_RULE_SETUP
 case 63:
 YY_RULE_SETUP
 #line 100 "/Users/mangonob/Developer/ctiger/src/lexer.x"
-{ printf("bad token %s\n", yytext); exit(1); }
+{ fprintf(stderr, "bad token %s\n", yytext); exit(1); }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(STR):
