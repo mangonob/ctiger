@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     FILE *f = fopen(input_filename, "r");
     if (!f)
     {
-      fprintf(stderr, "cannot open file %s.", input_filename);
+      fprintf(stderr, "cannot open file %s.\n", input_filename);
       exit(1);
     }
     input = f;
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
     FILE *f = fopen(output_filename, "w+");
     if (!f)
     {
-      fprintf(stderr, "cannot open file %s.", output_filename);
+      fprintf(stderr, "cannot open file %s.\n", output_filename);
       exit(1);
     }
     output = f;
