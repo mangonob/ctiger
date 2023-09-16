@@ -10,7 +10,7 @@
       "name": "Launch",
       "preLaunchTask": "Build All Target",
       "program": "${workspaceFolder}/build/tigerc",
-      "args": [],
+      "args": ["testcases/hello.tig"],
       "cwd": "${workspaceFolder}"
     }
   ]
