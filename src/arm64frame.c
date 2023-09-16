@@ -1,7 +1,10 @@
 #include <assert.h>
 #include <stdio.h>
+#include <math.h>
 #include "arm64frame.h"
 #include "utils.h"
+#define MAX(a, b) ((a) >= (b) ? (a) : (b))
+#define L(...) mkTempList(__VA_ARGS__, NULL)
 
 const int F_wordSize = 8;
 
@@ -266,10 +269,35 @@ T_stm F_procEntryExit1(F_frame frame, T_stm stm)
   return stm;
 }
 
-AS_instrList F_procEntryExit2(AS_instrList body)
+int align(int n, int size)
 {
-  // TODO
-  return body;
+  return n % size ? (n / size + 1) * size : (n / size * size);
+}
+
+AS_instrList F_procEntryExit2(F_frame frame, AS_instrList body)
+{
+  // -1 means if leaf function, no need to alloc stack
+  int max_formals_cnt = -1;
+  for (AS_instrList iList = body; iList; iList = iList->tail)
+  {
+    AS_instr instr = iList->head;
+    if (instr->kind == I_CALL)
+      max_formals_cnt = MAX(max_formals_cnt, instr->CALL.formals_cnt);
+  }
+
+  int frame_size = align(-frame->offset + max_formals_cnt * F_wordSize, 16)
+                   // reserve for return address and frame pointer
+                   - F_wordSize * 2;
+  AS_instrList prefix = mkInstrList(
+      AS_Oper(Format("sub `d0, `s0, #%d", frame_size + F_wordSize * 2), L(F_SP()), L(F_SP()), NULL),
+      AS_Oper(Format("stp `s0, `s1, [`s2, %d]", frame_size), NULL, L(F_FP(), F_RA(), F_SP()), NULL),
+      NULL);
+  AS_instrList postfix = mkInstrList(
+      AS_Oper(Format("ldp `s0, `s1, [`s2, %d]", frame_size), NULL, L(F_FP(), F_RA(), F_SP()), NULL),
+      AS_Oper("ret", NULL, NULL, NULL),
+      NULL);
+
+  return AS_splice(AS_splice(prefix, body), postfix);
 }
 
 AS_proc F_procEntryExit3(F_frame frame, AS_instrList body)

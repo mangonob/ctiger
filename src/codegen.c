@@ -124,7 +124,8 @@ static Temp_temp munchCall(T_exp call, bool returned)
     ++i;
   }
 
-  emit(AS_Oper(Format("bl %s", call->CALL.fun->NAME->name), NULL, NULL, NULL));
+  AS_instr calli = AS_Oper(Format("bl %s", call->CALL.fun->NAME->name), NULL, NULL, NULL);
+  emit(AS_Call(calli, i));
   if (returned)
   {
     maybeReturn = Temp_newtemp();

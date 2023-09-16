@@ -28,7 +28,7 @@ void doProc(FILE *out, F_frame frame, T_stm body)
   T_stmList trace = C_traceSchedule(block);
   AS_instrList iList = F_codegen(frame, trace);
 
-  iList = F_procEntryExit2(iList);
+  iList = F_procEntryExit2(frame, iList);
   AS_proc proc = F_procEntryExit3(frame, iList);
 
   fprintf(out, "%s\n", proc->prolog);

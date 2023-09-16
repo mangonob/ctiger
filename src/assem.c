@@ -42,6 +42,15 @@ AS_instr AS_Move(string assem, Temp_tempList dst, Temp_tempList src)
   return p;
 }
 
+AS_instr AS_Call(AS_instr oper, int formals_cnt)
+{
+  AS_instr p = _malloc(sizeof(*p));
+  p->kind = I_CALL;
+  p->CALL.oper = oper;
+  p->CALL.formals_cnt = formals_cnt;
+  return p;
+}
+
 Temp_temp nthTemp(Temp_tempList list, int n)
 {
   assert(list);
@@ -123,7 +132,18 @@ void AS_print(FILE *out, AS_instr i, Temp_map m)
     format(r, i->MOVE.assem, i->MOVE.dst, i->MOVE.src, NULL, m);
     fprintf(out, "    %s", r);
     break;
+  case I_CALL:
+    AS_print(out, i->CALL.oper, m);
+    break;
   }
+}
+
+AS_instrList AS_splice(AS_instrList a, AS_instrList b)
+{
+  if (a)
+    return AS_InstrList(a->head, AS_splice(a->tail, b));
+  else
+    return b ? AS_splice(AS_InstrList(b->head, NULL), b->tail) : NULL;
 }
 
 void AS_printInstrList(FILE *out, AS_instrList iList, Temp_map m)
@@ -141,6 +161,25 @@ AS_instrList AS_InstrList(AS_instr head, AS_instrList tail)
   p->head = head;
   p->tail = tail;
   return p;
+}
+
+AS_instrList mkInstrList(AS_instr head, ...)
+{
+  if (!head)
+    return NULL;
+
+  va_list args;
+  va_start(args, head);
+  AS_instrList l = AS_InstrList(head, NULL);
+  AS_instrList curr = l;
+  for (AS_instr next = va_arg(args, AS_instr); next; next = va_arg(args, AS_instr))
+  {
+    curr->tail = AS_InstrList(next, NULL);
+    curr = curr->tail;
+  }
+  va_end(args);
+
+  return l;
 }
 
 AS_proc AS_Proc(string prolog, AS_instrList body, string epilog)
