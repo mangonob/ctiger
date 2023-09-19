@@ -10,6 +10,7 @@
 #include "types.h"
 #include "escape.h"
 #include "canon.h"
+#include "flowgraph.h"
 #include "argv.h"
 #define TRACE
 #define CODEGEN
@@ -21,7 +22,13 @@
 extern int yyparse(FILE *input);
 extern A_exp tgroot;
 
-void doProc(FILE *out, F_frame frame, T_stm body)
+typedef enum
+{
+  PS_CODE_GEN,
+  PS_FLOW,
+} ProcStep;
+
+void doProc(FILE *out, F_frame frame, T_stm body, ProcStep step)
 {
   T_stmList linear = C_linearize(body);
   C_block block = C_basicBlocks(linear);
@@ -31,9 +38,20 @@ void doProc(FILE *out, F_frame frame, T_stm body)
   iList = F_procEntryExit2(frame, iList);
   AS_proc proc = F_procEntryExit3(frame, iList);
 
-  fprintf(out, "%s\n", proc->prolog);
-  AS_printInstrList(out, proc->body, F_initialRegisters(frame));
-  fprintf(out, "%s\n", proc->epilog);
+  switch (step)
+  {
+  case PS_CODE_GEN:
+    fprintf(out, "%s\n", proc->prolog);
+    AS_printInstrList(out, proc->body, F_initialRegisters(frame));
+    fprintf(out, "%s\n", proc->epilog);
+    break;
+  case PS_FLOW:
+  {
+    G_graph fg = FG_AssemFlowGraph(proc->body);
+    FG_show(out, fg, proc->body, F_initialRegisters(frame));
+    break;
+  }
+  }
 }
 
 void doStr(FILE *out, string str, Temp_label label)
@@ -52,21 +70,24 @@ void doStr(FILE *out, string str, Temp_label label)
 
 void usage()
 {
-  printf("usage: tigerc [filename]\n");
+  printf("usage: tigerc [-o <output>] [-f|--flow] [filename]\n");
   exit(0);
 }
 
 int main(int argc, char *argv[])
 {
   Arg_result argresult = parse_argv(argc, argv);
+  bool showHelp = S_lookup(argresult->named, S_Symbol("h")) != NULL || S_lookup(argresult->named, S_Symbol("help")) != NULL;
 
-  if (C_StrLength(argresult->nonamed) > 1)
+  if (C_StrLength(argresult->nonamed) > 1 || showHelp)
     usage();
 
   bool has_input = argresult->nonamed;
   string input_filename = has_input ? argresult->nonamed->head : NULL;
   string output_filename = S_lookup(argresult->named, S_Symbol("o"));
   output_filename = output_filename ? output_filename : S_lookup(argresult->named, S_Symbol("output"));
+  bool isBuildFlow = S_lookup(argresult->named, S_Symbol("f")) != NULL || S_lookup(argresult->named, S_Symbol("flow")) != NULL;
+  ProcStep step = isBuildFlow ? PS_FLOW : PS_CODE_GEN;
 
   FILE *input = NULL;
   FILE *output = NULL;
@@ -115,7 +136,7 @@ int main(int argc, char *argv[])
       doStr(output, frag->stringg.str, frag->stringg.label);
       break;
     case F_procFrag:
-      doProc(output, frag->proc.frame, frag->proc.body);
+      doProc(output, frag->proc.frame, frag->proc.body, step);
       break;
     }
   }

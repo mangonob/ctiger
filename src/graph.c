@@ -100,7 +100,44 @@ void G_rmEdge(G_node from, G_node to)
   to->preds = delete_(from, to->preds);
 }
 
-void G_show(FILE *out, G_nodeList p, void showInfo(void *));
+int G_nodeListFindIndex(G_nodeList nl, G_node n)
+{
+  if (nl && n)
+  {
+    for (int i = 0; nl; nl = nl->tail, ++i)
+      if (nl->head == n)
+        return i;
+  }
+  return -1;
+}
+
+void G_show(FILE *out, G_nodeList p, void showInfo(FILE *, void *))
+{
+  G_nodeList nl = p;
+  for (int i = 0; p; p = p->tail, ++i)
+  {
+    G_node node = p->head;
+    fprintf(out, "%d.\t", i + 1);
+    showInfo(out, G_nodeInfo(node));
+    G_nodeList succs = node->succs;
+    if (succs)
+    {
+      fprintf(out, "\t==> { ");
+      for (; succs; succs = succs->tail)
+      {
+        int found = G_nodeListFindIndex(nl, succs->head);
+        if (found >= 0)
+          fprintf(out, "%d", found + 1);
+
+        if (succs->tail)
+          fprintf(out, ", ");
+      }
+      fprintf(out, " }");
+    }
+
+    fprintf(out, "\n");
+  }
+}
 
 G_nodeList G_succ(G_node n)
 {

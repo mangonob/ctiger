@@ -122,7 +122,7 @@ void AS_print(FILE *out, AS_instr i, Temp_map m)
   {
   case I_OPER:
     format(r, i->OPER.assem, i->OPER.dst, i->OPER.src, i->OPER.jumps, m);
-    fprintf(out, "    %s", r);
+    fprintf(out, "%s", r);
     break;
   case I_LABEL:
     format(r, i->LABEL.assem, NULL, NULL, NULL, m);
@@ -130,7 +130,7 @@ void AS_print(FILE *out, AS_instr i, Temp_map m)
     break;
   case I_MOVE:
     format(r, i->MOVE.assem, i->MOVE.dst, i->MOVE.src, NULL, m);
-    fprintf(out, "    %s", r);
+    fprintf(out, "%s", r);
     break;
   case I_CALL:
     AS_print(out, i->CALL.oper, m);
@@ -150,7 +150,10 @@ void AS_printInstrList(FILE *out, AS_instrList iList, Temp_map m)
 {
   for (; iList; iList = iList->tail)
   {
-    AS_print(out, iList->head, m);
+    AS_instr instr = iList->head;
+    if (instr->kind != I_LABEL)
+      fprintf(out, "    ");
+    AS_print(out, instr, m);
     fprintf(out, "\n");
   }
 }
