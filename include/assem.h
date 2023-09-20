@@ -2,6 +2,7 @@
 #define ASSEM_H_
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include "temp.h"
 
 typedef struct
@@ -79,5 +80,10 @@ typedef struct
 } *AS_proc;
 
 AS_proc AS_Proc(string prolog, AS_instrList body, string epilog);
+
+/**
+ * instr is immediate jump instruction.
+ */
+bool AS_isBranch(AS_instr instr);
 
 #endif

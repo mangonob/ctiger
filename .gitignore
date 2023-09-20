@@ -2,6 +2,7 @@
 build/
 *.output
 *.s
+log.txt
 
 # ignore cmake
 CMakeLists.txt.user

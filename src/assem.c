@@ -193,3 +193,8 @@ AS_proc AS_Proc(string prolog, AS_instrList body, string epilog)
   p->epilog = epilog;
   return p;
 }
+
+bool AS_isBranch(AS_instr instr)
+{
+  return instr->kind == I_OPER && strstr(instr->OPER.assem, "b ") == instr->OPER.assem;
+}

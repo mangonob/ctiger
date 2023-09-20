@@ -164,7 +164,10 @@ G_graph FG_AssemFlowGraph(AS_instrList il)
         G_addEdge(node, to);
     }
 
-    prev = node;
+    if (AS_isBranch(instr))
+      prev = NULL;
+    else
+      prev = node;
   }
   return graph;
 }

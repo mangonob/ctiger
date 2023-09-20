@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdarg.h>
+#include <sys/time.h>
+#include "table.h"
 #include "utils.h"
 
 void *_malloc(size_t byte)
@@ -141,4 +143,59 @@ char *tintSuccess(char *input)
 char *tintInfo(char *input)
 {
   return tintString(input, TINT_BLUE);
+}
+
+typedef struct U_timeline_ *U_timeline;
+struct U_timeline_
+{
+  string label;
+  struct timeval start;
+};
+
+U_timeline U_Timeline(string label, struct timeval start)
+{
+  U_timeline p = _malloc(sizeof(*p));
+  p->label = label;
+  p->start = start;
+  return p;
+}
+
+typedef struct U_timelineList_ *U_timelineList;
+struct U_timelineList_
+{
+  U_timeline head;
+  U_timelineList tail;
+};
+
+U_timelineList U_TimelineList(U_timeline head, U_timelineList tail)
+{
+  U_timelineList p = _malloc(sizeof(*p));
+  p->head = head;
+  p->tail = tail;
+  return p;
+}
+
+static U_timelineList timelines = NULL;
+void startTimeline(string label)
+{
+  struct timeval start;
+  gettimeofday(&start, NULL);
+  timelines = U_TimelineList(U_Timeline(label, start), timelines);
+}
+
+void endTimeline()
+{
+  if (timelines)
+  {
+    U_timeline tl = timelines->head;
+    timelines = timelines->tail;
+    struct timeval start = tl->start;
+    struct timeval end;
+    gettimeofday(&end, NULL);
+
+    if (end.tv_sec - start.tv_sec > 0)
+      printf("%s used %.2lfs\n", tl->label, (end.tv_usec - start.tv_usec) / 1000000.0 + end.tv_sec - start.tv_sec);
+    else
+      printf("%s used %.2lfms\n", tl->label, (end.tv_usec - start.tv_usec) / 1000.0);
+  }
 }

@@ -12,6 +12,7 @@
 #include "canon.h"
 #include "flowgraph.h"
 #include "argv.h"
+#include "liveness.h"
 #define TRACE
 #define CODEGEN
 
@@ -48,6 +49,7 @@ void doProc(FILE *out, F_frame frame, T_stm body, ProcStep step)
   case PS_FLOW:
   {
     G_graph fg = FG_AssemFlowGraph(proc->body);
+    Live_liveness(fg);
     FG_show(out, fg, proc->body, F_initialRegisters(frame));
     break;
   }

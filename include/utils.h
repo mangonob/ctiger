@@ -44,4 +44,7 @@ char *tintWarning(char *input);
 char *tintSuccess(char *input);
 char *tintInfo(char *input);
 
+void startTimeline(string label);
+void endTimeline();
+
 #endif

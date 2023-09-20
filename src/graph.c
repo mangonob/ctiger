@@ -54,6 +54,16 @@ G_nodeList G_NodeList(G_node head, G_nodeList tail)
   return p;
 }
 
+G_nodeList G_NodeListReversed(G_nodeList list)
+{
+  G_nodeList nl = NULL;
+
+  for (; list; list = list->tail)
+    nl = G_NodeList(list->head, nl);
+
+  return nl;
+}
+
 G_nodeList G_nodes(G_graph g)
 {
   return g->nodes;
@@ -117,7 +127,6 @@ void G_show(FILE *out, G_nodeList p, void showInfo(FILE *, void *))
   for (int i = 0; p; p = p->tail, ++i)
   {
     G_node node = p->head;
-    fprintf(out, "%d.\t", i + 1);
     showInfo(out, G_nodeInfo(node));
     G_nodeList succs = node->succs;
     if (succs)
@@ -125,10 +134,7 @@ void G_show(FILE *out, G_nodeList p, void showInfo(FILE *, void *))
       fprintf(out, "\t==> { ");
       for (; succs; succs = succs->tail)
       {
-        int found = G_nodeListFindIndex(nl, succs->head);
-        if (found >= 0)
-          fprintf(out, "%d", found + 1);
-
+        showInfo(out, G_nodeInfo(succs->head));
         if (succs->tail)
           fprintf(out, ", ");
       }
@@ -173,12 +179,17 @@ bool G_goesTo(G_node from, G_node to)
   return G_inNodeList(to, from->succs);
 }
 
-static int length(G_nodeList l)
+static int G_nodeListLength(G_nodeList l)
 {
   int c = 0;
   for (; l; l = l->tail)
     c++;
   return c;
+}
+
+int G_degree(G_node n)
+{
+  return G_nodeListLength(G_pred(n)) + G_nodeListLength(G_succ(n));
 }
 
 void *G_nodeInfo(G_node n)
@@ -191,7 +202,7 @@ G_table G_empty()
   return TAB_empty();
 }
 
-void G_insert(G_table t, G_node n, void *v)
+void G_enter(G_table t, G_node n, void *v)
 {
   TAB_push(t, n, v);
 }
