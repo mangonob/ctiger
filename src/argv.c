@@ -43,7 +43,8 @@ Arg_result parse_argv(int argc, char *argv[])
     char *arg = argv[i];
     if (hasPrefix(arg, "--"))
     {
-      char *s = arg + 2;
+      arg += 2;
+      char *s = arg;
       while (*s && *s != '=')
         s++;
       char *name = strndup(arg, s - arg);

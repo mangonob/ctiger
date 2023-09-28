@@ -15,6 +15,9 @@ List_list List_List(void *head, List_list tail);
 List_list List_dump(List_list list);
 List_list List_reversed(List_list list);
 List_list List_concat(List_list l1, List_list l2);
+void *List_top(List_list list);
+void List_push(List_list *list, void *top);
+void *List_pop(List_list *list);
 List_list List_concated(List_list l1, List_list l2);
 int List_length(List_list list);
 

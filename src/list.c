@@ -49,6 +49,24 @@ List_list List_concat(List_list l1, List_list l2)
   return l1;
 }
 
+void *List_top(List_list list)
+{
+  return list ? list->head : NULL;
+}
+
+void List_push(List_list *list, void *top)
+{
+  *list = List_List(top, *list);
+}
+
+void *List_pop(List_list *list)
+{
+  void *top = List_top(*list);
+  if (*list)
+    *list = (*list)->tail;
+  return top;
+}
+
 List_list List_concated(List_list l1, List_list l2)
 {
   return List_concat(List_dump(l1), List_dump(l2));
