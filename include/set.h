@@ -2,21 +2,16 @@
 #define SET_H_
 #include <stdbool.h>
 #include <stdio.h>
+#include "list.h"
 
 typedef struct SET_set_ *SET_set;
-typedef struct SET_voidPtrList_ *SET_voidPtrList;
-struct SET_voidPtrList_
-{
-  void *head;
-  SET_voidPtrList tail;
-};
-SET_voidPtrList SET_VoidPtrList(void *head, SET_voidPtrList tail);
+
 SET_set SET_empty(void);
 bool SET_isEmpty(SET_set s);
 bool SET_contains(SET_set s, void *v);
 bool SET_enter(SET_set s, void *v);
 bool SET_remove(SET_set s, void *v);
-SET_voidPtrList SET_elements(SET_set s);
+List_list SET_elements(SET_set s);
 SET_set SET_copy(SET_set s);
 void *SET_first(SET_set s);
 void *SET_last(SET_set s);

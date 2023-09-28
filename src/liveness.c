@@ -31,7 +31,7 @@ SET_set setFromTempList(Temp_tempList tl)
 Temp_tempList setToTempList(SET_set s)
 {
   Temp_tempList tl = NULL;
-  for (SET_voidPtrList el = SET_elements(s); el; el = el->tail)
+  for (List_list el = SET_elements(s); el; el = el->tail)
   {
     tl = Temp_TempList(el->head, tl);
   }

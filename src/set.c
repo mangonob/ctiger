@@ -22,17 +22,9 @@ static node Node(void *v, node prev, node next)
   return p;
 }
 
-SET_voidPtrList SET_VoidPtrList(void *head, SET_voidPtrList tail)
-{
-  SET_voidPtrList p = _malloc(sizeof(*p));
-  p->head = head;
-  p->tail = tail;
-  return p;
-}
-
 struct SET_set_
 {
-  SET_voidPtrList table[SET_SIZE];
+  List_list table[SET_SIZE];
   node head;
   int size;
 };
@@ -59,7 +51,7 @@ bool SET_isEmpty(SET_set s)
 bool SET_contains(SET_set s, void *v)
 {
   uintptr_t key = hash(v);
-  SET_voidPtrList vl = s->table[key];
+  List_list vl = s->table[key];
 
   for (; vl; vl = vl->tail)
     if (((node)vl->head)->v == v)
@@ -117,8 +109,8 @@ bool SET_enter(SET_set s, void *v)
   nodeInsert(&s->head, n);
 
   uintptr_t key = hash(v);
-  SET_voidPtrList vl = s->table[key];
-  vl = SET_VoidPtrList(n, vl);
+  List_list vl = s->table[key];
+  vl = List_List(n, vl);
   s->table[key] = vl;
 
   s->size++;
@@ -131,8 +123,8 @@ bool SET_remove(SET_set s, void *v)
     return false;
 
   uintptr_t key = hash(v);
-  SET_voidPtrList vl = s->table[key];
-  for (SET_voidPtrList prev = NULL; vl; vl = vl->tail)
+  List_list vl = s->table[key];
+  for (List_list prev = NULL; vl; vl = vl->tail)
   {
     node n = vl->head;
     if (n->v == v)
@@ -158,7 +150,7 @@ SET_set SET_copy(SET_set s)
 {
   SET_set new_s = SET_empty();
 
-  for (SET_voidPtrList vl = SET_elements(s); vl; vl = vl->tail)
+  for (List_list vl = SET_elements(s); vl; vl = vl->tail)
     SET_enter(new_s, vl->head);
 
   return new_s;
@@ -192,7 +184,7 @@ SET_set SET_intersection(SET_set s1, SET_set s2)
 {
   SET_set s = SET_empty();
 
-  for (SET_voidPtrList vl = SET_elements(s1); vl; vl = vl->tail)
+  for (List_list vl = SET_elements(s1); vl; vl = vl->tail)
     if (SET_contains(s2, vl->head))
       SET_enter(s, vl->head);
 
@@ -201,7 +193,7 @@ SET_set SET_intersection(SET_set s1, SET_set s2)
 
 void SET_intersectionWith(SET_set s1, SET_set s2)
 {
-  for (SET_voidPtrList vl = SET_elements(s1); vl; vl = vl->tail)
+  for (List_list vl = SET_elements(s1); vl; vl = vl->tail)
     if (SET_contains(s2, vl->head))
       SET_enter(s1, vl->head);
 }
@@ -210,7 +202,7 @@ SET_set SET_union(SET_set s1, SET_set s2)
 {
   SET_set s = SET_copy(s1);
 
-  for (SET_voidPtrList vl = SET_elements(s2); vl; vl = vl->tail)
+  for (List_list vl = SET_elements(s2); vl; vl = vl->tail)
     SET_enter(s, vl->head);
 
   return s;
@@ -218,7 +210,7 @@ SET_set SET_union(SET_set s1, SET_set s2)
 
 void SET_unionWith(SET_set s1, SET_set s2)
 {
-  for (SET_voidPtrList vl = SET_elements(s2); vl; vl = vl->tail)
+  for (List_list vl = SET_elements(s2); vl; vl = vl->tail)
     SET_enter(s1, vl->head);
 }
 
@@ -226,7 +218,7 @@ SET_set SET_subtracting(SET_set s1, SET_set s2)
 {
   SET_set s = SET_empty();
 
-  for (SET_voidPtrList vl = SET_elements(s1); vl; vl = vl->tail)
+  for (List_list vl = SET_elements(s1); vl; vl = vl->tail)
     if (!SET_contains(s2, vl->head))
       SET_enter(s, vl->head);
 
@@ -235,18 +227,18 @@ SET_set SET_subtracting(SET_set s1, SET_set s2)
 
 void SET_subtractingWith(SET_set s1, SET_set s2)
 {
-  for (SET_voidPtrList vl = SET_elements(s1); vl; vl = vl->tail)
+  for (List_list vl = SET_elements(s1); vl; vl = vl->tail)
     if (!SET_contains(s2, vl->head))
       SET_enter(s1, vl->head);
 }
 
 bool SET_equals(SET_set s1, SET_set s2)
 {
-  for (SET_voidPtrList vl = SET_elements(s1); vl; vl = vl->tail)
+  for (List_list vl = SET_elements(s1); vl; vl = vl->tail)
     if (!SET_contains(s2, vl->head))
       return false;
 
-  for (SET_voidPtrList vl = SET_elements(s2); vl; vl = vl->tail)
+  for (List_list vl = SET_elements(s2); vl; vl = vl->tail)
     if (!SET_contains(s1, vl->head))
       return false;
 
@@ -258,13 +250,13 @@ int SET_size(SET_set s)
   return s->size;
 }
 
-SET_voidPtrList SET_elements(SET_set s)
+List_list SET_elements(SET_set s)
 {
-  SET_voidPtrList vl = NULL;
+  List_list vl = NULL;
   node tail = s->head ? s->head->prev : NULL;
   for (node head = s->head; head; head = head->next)
   {
-    vl = SET_VoidPtrList(head->v, vl);
+    vl = List_List(head->v, vl);
     if (head == tail)
       break;
   }
@@ -274,7 +266,7 @@ SET_voidPtrList SET_elements(SET_set s)
 void SET_show(FILE *out, SET_set s, void show(FILE *, void *))
 {
   fprintf(out, "{ ");
-  for (SET_voidPtrList vl = SET_elements(s); vl; vl = vl->tail)
+  for (List_list vl = SET_elements(s); vl; vl = vl->tail)
   {
     show(out, vl->head);
 
