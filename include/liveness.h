@@ -13,15 +13,17 @@ struct Live_moveList_
 };
 Live_moveList Live_MoveList(G_node src, G_node dst, Live_moveList tail);
 
-struct Live_graph
+typedef struct
 {
   G_graph graph;
   Live_moveList moves;
-};
+  G_table spillCosts;
+  G_table nodeMoves;
+} Live_graph;
 
 Temp_temp Live_gtemp(G_node n);
 
-struct Live_graph Live_liveness(G_graph flow);
+Live_graph Live_liveness(G_graph flow);
 
 static void enterLiveMap(G_table t, G_node flownode, SET_set temps)
 {

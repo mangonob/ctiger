@@ -7,12 +7,14 @@
 typedef struct SET_set_ *SET_set;
 
 SET_set SET_empty(void);
+SET_set SET_singleton(void *v);
 bool SET_isEmpty(SET_set s);
 bool SET_contains(SET_set s, void *v);
 bool SET_enter(SET_set s, void *v);
 bool SET_remove(SET_set s, void *v);
 List_list SET_elements(SET_set s);
 SET_set SET_copy(SET_set s);
+SET_set SET_map(SET_set s, void *f(void *));
 void *SET_first(SET_set s);
 void *SET_last(SET_set s);
 void *SET_pop(SET_set s);

@@ -126,11 +126,6 @@ static Temp_temp munchCall(T_exp call, bool returned)
 
   AS_instr calli = AS_Oper(Format("bl %s", call->CALL.fun->NAME->name), NULL, NULL, NULL);
   emit(AS_Call(calli, i));
-  if (returned)
-  {
-    maybeReturn = Temp_newtemp();
-    emit(AS_Oper("mov `d0, `s0", L(maybeReturn), L(F_RV()), NULL));
-  }
 
   // 恢复寄存器
   for (; reversed && saved; reversed = reversed->tail, saved = saved->tail)
@@ -138,6 +133,12 @@ static Temp_temp munchCall(T_exp call, bool returned)
     Temp_temp r = reversed->head;
     Temp_temp t = saved->head;
     emit(AS_Move("mov `d0, `s0", L(r), L(t)));
+  }
+
+  if (returned)
+  {
+    maybeReturn = Temp_newtemp();
+    emit(AS_Move("mov `d0, `s0", L(maybeReturn), L(F_RV())));
   }
 
   return maybeReturn;
@@ -165,7 +166,7 @@ static void munchBinop(Temp_temp d, T_exp exp)
       else
       {
         Temp_temp t = Temp_newtemp();
-        emit(AS_Move(Format("mov `d0 #%d", c), L(t), NULL));
+        emit(AS_Oper(Format("mov `d0 #%d", c), L(t), NULL, NULL));
         emit(AS_Oper("add `d0, `s0, `s1", dl, L(s, t), NULL));
       }
       break;
@@ -177,7 +178,7 @@ static void munchBinop(Temp_temp d, T_exp exp)
       else
       {
         Temp_temp t = Temp_newtemp();
-        emit(AS_Move(Format("mov `d0 #%d", c), L(t), NULL));
+        emit(AS_Oper(Format("mov `d0 #%d", c), L(t), NULL, NULL));
         emit(AS_Oper("subs `d0, `s0, `s1", dl, L(s, t), NULL));
       }
       break;
@@ -386,7 +387,7 @@ static void munchStm(T_stm stm)
   {
     Temp_temp t = stm->MOVE.dst->TEMP;
     int c = stm->MOVE.src->CONST;
-    emit(AS_Move(Format("mov `d0, #%d", c), L(t), NULL));
+    emit(AS_Oper(Format("mov `d0, #%d", c), L(t), NULL, NULL));
   }
   else if (stm->kind == T_MOVE)
   {

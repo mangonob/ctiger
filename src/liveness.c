@@ -4,7 +4,6 @@
 #include "utils.h"
 #include "flowgraph.h"
 #include "frame.h"
-// #define REPORT_LIVE_MAP
 
 Live_moveList Live_MoveList(G_node src, G_node dst, Live_moveList tail)
 {
@@ -32,47 +31,8 @@ Temp_tempList setToTempList(SET_set s)
 {
   Temp_tempList tl = NULL;
   for (List_list el = SET_elements(s); el; el = el->tail)
-  {
     tl = Temp_TempList(el->head, tl);
-  }
   return tl;
-}
-
-static void printTemp(FILE *out, void *t)
-{
-  Temp_temp _t = (Temp_temp)t;
-  Temp_map map = F_initialRegisters(NULL);
-  string name = Temp_look(map, _t);
-
-  if (name)
-    fprintf(out, "%s", name);
-  else
-    fprintf(out, "t%d", _t->num);
-}
-
-static void reportLiveMap(G_graph flow, G_table in, G_table out, int loop_cnt)
-{
-  printf("================ Pass %d ================\n", loop_cnt);
-  int sn = 1;
-  for (G_nodeList nl = G_nodes(flow); nl; nl = nl->tail, ++sn)
-  {
-    SET_set in_n = lookupLiveMap(in, nl->head);
-    SET_set out_n = lookupLiveMap(out, nl->head);
-    // TODO print in, out set
-    AS_instr instr = (AS_instr)G_nodeInfo(nl->head);
-    printf("%d. \t", sn);
-    AS_print(stdout, instr, F_initialRegisters(NULL));
-    printf("\t in: ");
-    SET_show(stdout, in_n, printTemp);
-    printf(", out: ");
-    SET_show(stdout, out_n, printTemp);
-    printf(", def: ");
-    SET_show(stdout, setFromTempList(FG_def(nl->head)), printTemp);
-    printf(", use: ");
-    SET_show(stdout, setFromTempList(FG_use(nl->head)), printTemp);
-    printf("\n");
-  }
-  printf("\n");
 }
 
 static void generateLiveMap(G_graph flow, G_table in, G_table out)
@@ -118,10 +78,6 @@ static void generateLiveMap(G_graph flow, G_table in, G_table out)
       if (SET_size(in_n) != in_n_sz || SET_size(out_n) != out_n_sz)
         changed = true;
     }
-
-#ifdef REPORT_LIVE_MAP
-    reportLiveMap(flow, in, out, loop_cnt);
-#endif
   }
 }
 
@@ -136,11 +92,12 @@ G_node requestNode(G_graph graph, TAB_table nodes, Temp_temp t)
   return n;
 }
 
-void generateConflictMap(struct Live_graph *g, G_graph flow, G_table out)
+void generateConflictMap(Live_graph *g, G_graph flow, G_table out)
 {
   G_graph conflict = G_Graph();
   Live_moveList moves = NULL;
   TAB_table nodes = TAB_empty();
+  G_table nodeMoves = G_empty();
 
   for (G_nodeList nl = G_nodes(flow); nl; nl = nl->tail)
   {
@@ -155,10 +112,15 @@ void generateConflictMap(struct Live_graph *g, G_graph flow, G_table out)
         Temp_temp dst = def->head;
         Temp_temp src = use->head;
         G_node dst_node = requestNode(conflict, nodes, dst);
-        moves = Live_MoveList(requestNode(conflict, nodes, src), dst_node, moves);
+        G_node src_node = requestNode(conflict, nodes, src);
+        moves = Live_MoveList(src_node, dst_node, moves);
+
+        AS_instr instr = G_nodeInfo(node);
+        G_enter(nodeMoves, dst_node, SET_union(G_look(nodeMoves, dst_node), SET_singleton(moves)));
+        G_enter(nodeMoves, src_node, SET_union(G_look(nodeMoves, src_node), SET_singleton(moves)));
 
         for (Temp_tempList out_temps = setToTempList(lookupLiveMap(out, node)); out_temps; out_temps = out_temps->tail)
-          if (out_temps->head != src)
+          if (out_temps->head != src && out_temps->head != dst)
           {
             G_node out_node = requestNode(conflict, nodes, out_temps->head);
             G_addEdge(dst_node, out_node);
@@ -172,28 +134,76 @@ void generateConflictMap(struct Live_graph *g, G_graph flow, G_table out)
       {
         Temp_temp def_t = defs->head;
         G_node def_node = requestNode(conflict, nodes, def_t);
+
         for (Temp_tempList out_temps = setToTempList(lookupLiveMap(out, node)); out_temps; out_temps = out_temps->tail)
-        {
-          G_node out_node = requestNode(conflict, nodes, out_temps->head);
-          G_addEdge(def_node, out_node);
-          G_addEdge(out_node, def_node);
-        }
+          if (out_temps->head != def_t)
+          {
+            G_node out_node = requestNode(conflict, nodes, out_temps->head);
+            G_addEdge(def_node, out_node);
+            G_addEdge(out_node, def_node);
+          }
       }
     }
   }
 
+  // reserved registers
+  Temp_tempList rtl = mkTempList(F_SP(), F_FP(), F_ZERO(), F_RA(), NULL);
+  G_nodeList reserve = NULL;
+  for (; rtl; rtl = rtl->tail)
+    reserve = G_NodeList(requestNode(conflict, nodes, rtl->head), reserve);
+
+  for (G_nodeList nl = G_nodes(conflict); nl; nl = nl->tail)
+  {
+    G_node n = nl->head;
+    for (G_nodeList rl = reserve; rl; rl = rl->tail)
+      if (n != rl->head)
+      {
+        G_addEdge(n, rl->head);
+        G_addEdge(rl->head, n);
+      }
+  }
+
   g->graph = conflict;
   g->moves = moves;
+  g->nodeMoves = nodeMoves;
 }
 
-struct Live_graph Live_liveness(G_graph flow)
+static void calculateCost(G_graph flow, Live_graph *live)
+{
+  G_nodeList f_nodes = G_nodes(flow);
+  G_nodeList g_nodes = G_nodes(live->graph);
+
+  TAB_table tempTimes = TAB_empty();
+  for (; f_nodes; f_nodes = f_nodes->tail)
+  {
+    G_node n = f_nodes->head;
+    for (Temp_tempList tl = Temp_listSplice(FG_def(n), FG_use(n)); tl; tl = tl->tail)
+    {
+      Temp_temp t = tl->head;
+      int times = (int)(uintptr_t)TAB_lookup(tempTimes, t);
+      TAB_push(tempTimes, t, (void *)(uintptr_t)(times + 1));
+    }
+  }
+
+  G_table costs = G_empty();
+  for (; g_nodes; g_nodes = g_nodes->tail)
+  {
+    G_node n = g_nodes->head;
+    Temp_temp t = G_nodeInfo(n);
+    int times = (int)(uintptr_t)TAB_lookup(tempTimes, t);
+    double cost = (double)G_degree(n) / 2 / times;
+    G_enter(costs, n, Double(cost));
+  }
+  live->spillCosts = costs;
+}
+
+Live_graph Live_liveness(G_graph flow)
 {
   G_table in = G_empty(), out = G_empty();
   generateLiveMap(flow, in, out);
 
-  struct Live_graph g;
+  Live_graph g;
   generateConflictMap(&g, flow, out);
-
-  G_show(stdout, G_nodes(g.graph), printTemp);
+  calculateCost(flow, &g);
   return g;
 }

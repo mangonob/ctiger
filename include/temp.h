@@ -18,7 +18,12 @@ struct Temp_tempList_
   Temp_tempList tail;
 };
 Temp_tempList Temp_TempList(Temp_temp head, Temp_tempList tail);
+int Temp_listLen(Temp_tempList list);
+Temp_tempList Temp_take(Temp_tempList list, int n);
+Temp_tempList Temp_drop(Temp_tempList list, int n);
+Temp_tempList Temp_takeLast(Temp_tempList list, int n);
 Temp_tempList mkTempList(Temp_temp head, ...);
+Temp_tempList Temp_listSplice(Temp_tempList l1, Temp_tempList l2);
 
 typedef S_symbol Temp_label;
 Temp_label Temp_newLabel();

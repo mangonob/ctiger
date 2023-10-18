@@ -1,5 +1,6 @@
 #ifndef __TABLE__HEADER
 #define __TABLE__HEADER
+#include <stdio.h>
 
 #define TABLE_SIZE 127
 
@@ -26,6 +27,6 @@ TAB_table TAB_empty();
 void TAB_push(TAB_table t, void *key, void *value);
 void *TAB_pop(TAB_table t);
 void *TAB_lookup(TAB_table t, void *key);
-void TAB_dump(TAB_table t, void (*show)(void *key, void *value));
+void TAB_dump(FILE *out, TAB_table t, void (*show)(FILE *out, void *key, void *value));
 
 #endif

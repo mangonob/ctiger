@@ -199,3 +199,10 @@ void endTimeline()
       printf("%s used %.2lfms\n", tl->label, (end.tv_usec - start.tv_usec) / 1000.0);
   }
 }
+
+double *Double(double d)
+{
+  double *p = _malloc(sizeof(*p));
+  *p = d;
+  return p;
+}

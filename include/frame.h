@@ -77,6 +77,7 @@ Temp_temp F_XN(int i);
 
 Temp_tempList F_callersaves();
 Temp_tempList F_calleesaves();
+Temp_tempList F_registers();
 
 Temp_map F_initialRegisters(F_frame f);
 

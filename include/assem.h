@@ -67,6 +67,7 @@ struct AS_instrList_
   AS_instrList tail;
 };
 AS_instrList AS_InstrList(AS_instr head, AS_instrList tail);
+int AS_instrListLen(AS_instrList il);
 AS_instrList mkInstrList(AS_instr head, ...);
 
 AS_instrList AS_splice(AS_instrList a, AS_instrList b);

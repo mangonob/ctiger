@@ -57,7 +57,7 @@ void *TAB_pop(TAB_table t)
   return b->key;
 }
 
-void TAB_dump(TAB_table t, void (*show)(void *key, void *value))
+void TAB_dump(FILE *out, TAB_table t, void (*show)(FILE *out, void *key, void *value))
 {
   void *key = t->top;
   uintptr_t index = ((uintptr_t)key) % TABLE_SIZE;
@@ -67,8 +67,8 @@ void TAB_dump(TAB_table t, void (*show)(void *key, void *value))
   {
     t->table[index] = b->next;
     t->top = b->prevtop;
-    show(b->key, b->value);
-    TAB_dump(t, show);
+    show(out, b->key, b->value);
+    TAB_dump(out, t, show);
     assert(t->top == b->prevtop && t->table[index] == b->next);
     t->top = key;
     t->table[index] = b;

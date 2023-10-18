@@ -3,6 +3,16 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#ifdef __APPLE__
+#include <malloc/malloc.h>
+#define msize(ptr) malloc_size((const void *)(ptr))
+#elif defined __linux__
+#include <malloc.h>
+#define msize(ptr) malloc_usable_size((void *)(ptr))
+#else
+#error msize is not implemented on this platform
+#endif
+
 void *_malloc(size_t byte);
 
 typedef struct U_boolList_ *U_boolList;
@@ -46,5 +56,7 @@ char *tintInfo(char *input);
 
 void startTimeline(string label);
 void endTimeline();
+
+double *Double(double d);
 
 #endif

@@ -158,15 +158,28 @@ G_nodeList G_pred(G_node n)
 
 static G_nodeList cat(G_nodeList a, G_nodeList b)
 {
-  if (!a)
-    return b;
-  if (!b)
-    return a;
+  G_nodeList l = NULL;
+  G_nodeList last = NULL;
 
-  if (a->head == b->head)
-    return G_NodeList(a->head, cat(a->tail, b->tail));
-  else
-    return G_NodeList(a->head, cat(a->tail, b));
+  for (; a; a = a->tail)
+  {
+    G_nodeList n = G_NodeList(a->head, NULL);
+    if (l)
+      last = last->tail = n;
+    else
+      l = last = n;
+  }
+
+  for (; b; b = b->tail)
+  {
+    G_nodeList n = G_NodeList(b->head, NULL);
+    if (l)
+      last = last->tail = n;
+    else
+      l = last = n;
+  }
+
+  return l;
 }
 
 G_nodeList G_adj(G_node n)

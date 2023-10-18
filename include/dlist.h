@@ -14,7 +14,7 @@ struct DList_list_
 
 DList_list DList_List(void *v, DList_list prev, DList_list next);
 DList_list DList_dump(DList_list list);
-DList_reverse(DList_list *list);
+DList_list DList_reverse(DList_list *list);
 DList_list DList_reversed(DList_list list);
 DList_list DList_concat(DList_list l1, DList_list l2);
 DList_list DList_concated(DList_list l1, DList_list l2);

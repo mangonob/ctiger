@@ -166,6 +166,14 @@ AS_instrList AS_InstrList(AS_instr head, AS_instrList tail)
   return p;
 }
 
+int AS_instrListLen(AS_instrList il)
+{
+  int len = 0;
+  for (; il; il = il->tail)
+    len++;
+  return len;
+}
+
 AS_instrList mkInstrList(AS_instr head, ...)
 {
   if (!head)

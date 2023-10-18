@@ -6,6 +6,8 @@
 #define MAX(a, b) ((a) >= (b) ? (a) : (b))
 #define L(...) mkTempList(__VA_ARGS__, NULL)
 
+#define MAX_REG_NO 30
+
 const int F_wordSize = 8;
 
 Temp_label F_name(F_frame f)
@@ -39,11 +41,11 @@ F_accessList F_AccessListReversed(F_accessList list)
   return r;
 }
 
-Temp_temp gen_registers[32] = {};
+Temp_temp gen_registers[MAX_REG_NO + 1] = {0};
 
 Temp_temp F_XN(int n)
 {
-  assert(n >= 0 && n <= 30);
+  assert(n >= 0 && n <= MAX_REG_NO);
 
   if (!gen_registers[n])
     gen_registers[n] = Temp_newtemp();
@@ -187,10 +189,26 @@ Temp_tempList F_calleesaves()
   return mkTempList(F_XN(19), F_XN(20), F_XN(21), F_XN(22), F_XN(23), F_XN(24), F_XN(25), F_XN(26), F_XN(27), F_XN(28), NULL);
 }
 
+static Temp_tempList F_arguments()
+{
+  return mkTempList(F_XN(0), F_XN(1), F_XN(2), F_XN(3), F_XN(4), F_XN(5), F_XN(6), F_XN(7), NULL);
+}
+
+Temp_tempList F_registers()
+{
+  return Temp_listSplice(
+      Temp_listSplice(
+          F_callersaves(),
+          F_calleesaves()),
+      Temp_listSplice(
+          F_arguments(),
+          mkTempList(F_SP(), F_FP(), F_RV(), F_ZERO(), NULL)));
+}
+
 Temp_map F_initialRegisters(F_frame f)
 {
   Temp_map m = Temp_empty();
-  for (int n = 0; n <= 30; ++n)
+  for (int n = 0; n <= MAX_REG_NO; ++n)
   {
     char reg_name[4] = {};
     sprintf(reg_name, "x%d", n);

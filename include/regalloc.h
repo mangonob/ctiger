@@ -4,11 +4,12 @@
 #include "assem.h"
 #include "frame.h"
 
-struct RA_result
+typedef struct
 {
   Temp_map coloring;
   AS_instrList il;
-};
-struct RA_result RA_regAlloc(F_frame f, AS_instrList il);
+} RA_result;
+
+RA_result RA_regAlloc(F_frame frame, AS_instrList il);
 
 #endif

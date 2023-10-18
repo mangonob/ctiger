@@ -43,9 +43,16 @@ SET_set SET_empty(void)
   return p;
 }
 
+SET_set SET_singleton(void *v)
+{
+  SET_set s = SET_empty();
+  SET_enter(s, v);
+  return s;
+}
+
 bool SET_isEmpty(SET_set s)
 {
-  return s->head == NULL;
+  return s->size == 0;
 }
 
 bool SET_contains(SET_set s, void *v)
@@ -148,12 +155,22 @@ bool SET_remove(SET_set s, void *v)
 
 SET_set SET_copy(SET_set s)
 {
-  SET_set new_s = SET_empty();
+  SET_set cp = SET_empty();
 
   for (List_list vl = SET_elements(s); vl; vl = vl->tail)
-    SET_enter(new_s, vl->head);
+    SET_enter(cp, vl->head);
 
-  return new_s;
+  return cp;
+}
+
+SET_set SET_map(SET_set s, void *f(void *))
+{
+  SET_set m = SET_empty();
+
+  for (List_list vl = SET_elements(s); vl; vl = vl->tail)
+    SET_enter(m, f(vl->head));
+
+  return m;
 }
 
 void *SET_first(SET_set s)
@@ -252,6 +269,9 @@ int SET_size(SET_set s)
 
 List_list SET_elements(SET_set s)
 {
+  if (!s)
+    return NULL;
+
   List_list vl = NULL;
   node tail = s->head ? s->head->prev : NULL;
   for (node head = s->head; head; head = head->next)
@@ -275,5 +295,5 @@ void SET_show(FILE *out, SET_set s, void show(FILE *, void *))
     else
       fprintf(out, " ");
   }
-  fprintf(out, "}");
+  fprintf(out, "}\n");
 }
