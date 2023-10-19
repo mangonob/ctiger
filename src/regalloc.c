@@ -9,8 +9,6 @@
 #include "temp.h"
 #define L(...) mkTempList(__VA_ARGS__, NULL)
 
-// #define SKIP_REDUCE
-
 static SET_set tempList2Set(Temp_tempList tl)
 {
   SET_set s = SET_empty();

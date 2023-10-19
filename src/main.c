@@ -52,7 +52,7 @@ static void doStr(FILE *out, string str, Temp_label label)
   fprintf(out, ".asciiz ");
   for (char *ch = str; *ch; ++ch)
   {
-    fprintf(out, "%02x", *ch);
+    fprintf(out, "%02X", *ch);
     if (*(ch + 1))
       fprintf(out, " ");
     else

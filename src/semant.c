@@ -265,7 +265,7 @@ expty transExp(Tr_level level, S_table venv, S_table tenv, A_exp exp, Temp_label
       /** fallthrough to case A_negOp */
     case A_eqOp:
     case A_neqOp:
-      if (!checkType(lhs.ty, rhs.ty))
+      if (!checkType(lhs.ty, rhs.ty) && !checkType(rhs.ty, lhs.ty))
         EM_Error(exp->op.rhs->pos, "unmatch type to compare");
 
       if (checkType(lhs.ty, Ty_String()))
@@ -284,10 +284,16 @@ expty transExp(Tr_level level, S_table venv, S_table tenv, A_exp exp, Temp_label
     A_expseq args = exp->call.args;
 
     Tr_expseq arg_exps = NULL;
-    while (formals && formals->head && args && args->head)
+    Tr_expseq last = NULL;
+    while (formals && args)
     {
       expty arg = transExp(level, venv, tenv, args->head, brk);
-      arg_exps = Tr_ExpSeq(arg.exp, arg_exps);
+      Tr_expseq n = Tr_ExpSeq(arg.exp, NULL);
+
+      if (arg_exps)
+        last = last->tail = n;
+      else
+        arg_exps = last = n;
 
       if (!checkType(arg.ty, formals->head))
         EM_Error(args->head->pos, "arguments type unmatched");
@@ -296,9 +302,9 @@ expty transExp(Tr_level level, S_table venv, S_table tenv, A_exp exp, Temp_label
       args = args->tail;
     }
 
-    if (formals && formals->head && !args)
+    if (formals && !args)
       EM_Error(exp->call.func->pos, "too few arguments to function %s", S_name(exp->call.func->id));
-    else if (args && args->head && !formals)
+    else if (args && !formals)
       EM_Error(args->head->pos, "too many arguments to function %s", S_name(exp->call.func->id));
     else
       return expTy(Tr_callExp(level, entry->fun.level, entry->fun.label, arg_exps), result);
