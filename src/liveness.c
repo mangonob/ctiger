@@ -45,12 +45,9 @@ static void generateLiveMap(G_graph flow, G_table in, G_table out)
 
   G_nodeList rnl = G_NodeListReversed(G_nodes(flow));
   bool changed = true;
-  // 迭代次数
-  int loop_cnt = 0;
   while (changed)
   {
     changed = false;
-    loop_cnt++;
     for (G_nodeList nl = rnl; nl; nl = nl->tail)
     {
       G_node node = nl->head;
@@ -106,30 +103,31 @@ void generateConflictMap(Live_graph *g, G_graph flow, G_table out)
     {
       Temp_tempList use = FG_use(node);
       Temp_tempList def = FG_def(node);
+      assert(use && def);
 
-      if (use && def)
-      {
-        Temp_temp dst = def->head;
-        Temp_temp src = use->head;
-        G_node dst_node = requestNode(conflict, nodes, dst);
-        G_node src_node = requestNode(conflict, nodes, src);
-        moves = Live_MoveList(src_node, dst_node, moves);
+      Temp_temp dst = def->head;
+      Temp_temp src = use->head;
+      G_node dst_node = requestNode(conflict, nodes, dst);
+      G_node src_node = requestNode(conflict, nodes, src);
+      moves = Live_MoveList(src_node, dst_node, moves);
 
-        AS_instr instr = G_nodeInfo(node);
-        G_enter(nodeMoves, dst_node, SET_union(G_look(nodeMoves, dst_node), SET_singleton(moves)));
-        G_enter(nodeMoves, src_node, SET_union(G_look(nodeMoves, src_node), SET_singleton(moves)));
+      AS_instr instr = G_nodeInfo(node);
+      G_enter(nodeMoves, dst_node, SET_union(G_look(nodeMoves, dst_node), SET_singleton(moves)));
+      G_enter(nodeMoves, src_node, SET_union(G_look(nodeMoves, src_node), SET_singleton(moves)));
 
-        for (Temp_tempList out_temps = setToTempList(lookupLiveMap(out, node)); out_temps; out_temps = out_temps->tail)
-          if (out_temps->head != src && out_temps->head != dst)
-          {
-            G_node out_node = requestNode(conflict, nodes, out_temps->head);
-            G_addEdge(dst_node, out_node);
-            G_addEdge(out_node, dst_node);
-          }
-      }
+      for (Temp_tempList out_temps = setToTempList(lookupLiveMap(out, node)); out_temps; out_temps = out_temps->tail)
+        if (out_temps->head != src && out_temps->head != dst)
+        {
+          G_node out_node = requestNode(conflict, nodes, out_temps->head);
+          G_addEdge(dst_node, out_node);
+          G_addEdge(out_node, dst_node);
+        }
     }
     else
     {
+      for (Temp_tempList uses = FG_use(node); uses; uses = uses->tail)
+        requestNode(conflict, nodes, uses->head);
+
       for (Temp_tempList defs = FG_def(node); defs; defs = defs->tail)
       {
         Temp_temp def_t = defs->head;

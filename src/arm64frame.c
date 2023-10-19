@@ -106,8 +106,8 @@ F_frame F_newFrame(Temp_label name, U_boolList formalEscapes)
   {
     if (formalEscapes->head)
     {
-      formals = F_AccessList(InFrame(f->offset), formals);
       f->offset -= F_wordSize;
+      formals = F_AccessList(InFrame(f->offset), formals);
     }
     else
       formals = F_AccessList(InReg(Temp_newtemp()), formals);
@@ -122,8 +122,8 @@ F_access F_allocLocal(F_frame f, bool escape)
   F_access access;
   if (escape)
   {
-    access = InFrame(f->offset);
     f->offset -= F_wordSize;
+    access = InFrame(f->offset);
   }
   else
     access = InReg(Temp_newtemp());

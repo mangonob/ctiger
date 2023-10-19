@@ -91,16 +91,6 @@ static Temp_temp munchCall(T_exp call, bool returned)
   Temp_tempList saved = NULL;
   Temp_tempList reversed = NULL;
 
-  // 保存寄存器
-  for (Temp_tempList callees = F_callersaves(); callees; callees = callees->tail)
-  {
-    Temp_temp r = callees->head;
-    Temp_temp t = Temp_newtemp();
-    saved = Temp_TempList(t, saved);
-    reversed = Temp_TempList(callees->head, reversed);
-    emit(AS_Move("mov `d0, `s0", L(t), L(r)));
-  }
-
   int i = 0;
   for (T_expList params = call->CALL.args; params; params = params->tail)
   {
@@ -122,6 +112,16 @@ static Temp_temp munchCall(T_exp call, bool returned)
     }
 
     ++i;
+  }
+
+  // 保存寄存器
+  for (Temp_tempList callees = F_callersaves(); callees; callees = callees->tail)
+  {
+    Temp_temp r = callees->head;
+    Temp_temp t = Temp_newtemp();
+    saved = Temp_TempList(t, saved);
+    reversed = Temp_TempList(callees->head, reversed);
+    emit(AS_Move("mov `d0, `s0", L(t), L(r)));
   }
 
   AS_instr calli = AS_Oper(Format("bl %s", call->CALL.fun->NAME->name), NULL, NULL, NULL);
@@ -326,7 +326,7 @@ void saveMem(T_exp mem, Temp_temp t)
     if (offset > 0)
       emit(AS_Oper(Format("str `s0, [`s1, %d]", offset), NULL, L(t, base), NULL));
     else if (offset < 0)
-      emit(AS_Oper(Format("str `s0, [`s1, %d]", offset), NULL, L(t, base), NULL));
+      emit(AS_Oper(Format("stur `s0, [`s1, %d]", offset), NULL, L(t, base), NULL));
     else
       emit(AS_Oper("str `s0, [`s1]", NULL, L(t, base), NULL));
   }
