@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <string.h>
 #include "regalloc.h"
 #include "liveness.h"
 #include "flowgraph.h"
@@ -172,17 +173,18 @@ static bool isSynonymMove(AS_instr i, Temp_map color)
   }
 }
 
-static bool reduceMoves(AS_instrList *iList, Temp_map color)
+/**
+ * Remove move instructions between source register and destination register
+ */
+static AS_instrList reduceMoves(AS_instrList iList, Temp_map color)
 {
   AS_instrList rl = NULL;
   AS_instrList last = NULL;
-  bool reduced = false;
-  for (AS_instrList il = *iList; il; il = il->tail)
+  for (AS_instrList il = iList; il; il = il->tail)
   {
     AS_instrList l = AS_InstrList(il->head, NULL);
     if (isSynonymMove(il->head, color))
     {
-      reduced = true;
       continue;
     }
     else
@@ -194,10 +196,50 @@ static bool reduceMoves(AS_instrList *iList, Temp_map color)
     }
   }
 
-  if (reduced)
-    *iList = rl;
+  return rl;
+}
 
-  return reduced;
+static Temp_labelList instrJumps(AS_instr i)
+{
+  switch (i->kind)
+  {
+  case I_OPER:
+    return i->OPER.jumps ? i->OPER.jumps->labels : NULL;
+  case I_MOVE:
+  case I_CALL:
+  case I_LABEL:
+    return NULL;
+  }
+}
+
+/**
+ * Remove useless label and "nop" instructions
+ */
+static AS_instrList reduceLabel(AS_instrList iList)
+{
+  TAB_table jumps = TAB_empty();
+  for (AS_instrList il = iList; il; il = il->tail)
+    for (Temp_labelList ll = instrJumps(il->head); ll; ll = ll->tail)
+      TAB_push(jumps, ll->head, SET_union(TAB_lookup(jumps, ll->head), SET_singleton(il->head)));
+
+  AS_instrList rl = NULL;
+  AS_instrList last = NULL;
+
+  for (; iList; iList = iList->tail)
+  {
+    AS_instr i = iList->head;
+    AS_instrList n = AS_InstrList(i, NULL);
+
+    if (i->kind == I_OPER && strcmp(i->OPER.assem, "nop") == 0)
+      continue;
+
+    if (rl)
+      last = last->tail = n;
+    else
+      rl = last = n;
+  }
+
+  return rl;
 }
 
 static COL_result colorInstrList(F_frame frame, AS_instrList il)
@@ -220,7 +262,8 @@ RA_result RA_regAlloc(F_frame frame, AS_instrList il)
     }
     else
     {
-      reduceMoves(&il, col_result.coloring);
+      il = reduceMoves(il, col_result.coloring);
+      il = reduceLabel(il);
       break;
     }
   }
