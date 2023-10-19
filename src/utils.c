@@ -40,6 +40,25 @@ string Format(char *fmt, ...)
   return p;
 }
 
+string _mkStrings(string s, ...)
+{
+  int len = strlen(s);
+  va_list as;
+  va_start(as, s);
+  for (string n = va_arg(as, string); n; n = va_arg(as, string))
+    len += strlen(n);
+  va_end(as);
+  string r = _malloc(len + 1);
+
+  strcpy(r, s);
+
+  va_start(as, s);
+  for (string n = va_arg(as, string); n; n = va_arg(as, string))
+    strcat(r, n);
+  va_end(as);
+  return r;
+}
+
 U_boolList U_BoolList(bool head, U_boolList tail)
 {
   U_boolList p = _malloc(sizeof(*p));

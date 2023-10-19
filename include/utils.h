@@ -13,6 +13,8 @@
 #error msize is not implemented on this platform
 #endif
 
+#define mkStrings(...) _mkStrings(__VA_ARGS__, NULL)
+
 void *_malloc(size_t byte);
 
 typedef struct U_boolList_ *U_boolList;
@@ -26,6 +28,7 @@ typedef char *string;
 
 string String(char *s);
 string Format(char *fmt, ...);
+string _mkStrings(string s, ...);
 
 /** Construct a bool list */
 U_boolList U_BoolList(bool head, U_boolList tail);

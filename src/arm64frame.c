@@ -306,10 +306,12 @@ AS_instrList F_procEntryExit2(F_frame frame, AS_instrList body)
   int frame_size = align(-frame->offset + max_formals_cnt * F_wordSize, 16)
                    // reserve for return address and frame pointer
                    - F_wordSize * 2;
+
   AS_instrList prefix = mkInstrList(
       AS_Oper(Format("sub `d0, `s0, #%d", frame_size + F_wordSize * 2), L(F_SP()), L(F_SP()), NULL),
       AS_Oper(Format("stp `s0, `s1, [`s2, %d]", frame_size), NULL, L(F_FP(), F_RA(), F_SP()), NULL),
       NULL);
+
   AS_instrList postfix = mkInstrList(
       AS_Oper(Format("ldp `s0, `s1, [`s2, %d]", frame_size), NULL, L(F_FP(), F_RA(), F_SP()), NULL),
       AS_Oper("ret", NULL, NULL, NULL),
@@ -320,8 +322,14 @@ AS_instrList F_procEntryExit2(F_frame frame, AS_instrList body)
 
 AS_proc F_procEntryExit3(F_frame frame, AS_instrList body)
 {
+  string s = Temp_labelstring(frame->name);
+
+  string prolog = mkStrings(
+      Format("\t.global\t%s\t\t\t; -- Begin function %s\n", s, s + 1),
+      "\t.p2align\t2");
+
   return AS_Proc(
-      Format("; PROCEDURE %s BEGIN", frame->name->name),
-      AS_InstrList(AS_Label(Format("%s:", Temp_labelstring(frame->name)), frame->name), body),
-      Format("; PROCEDURE %s END", frame->name->name));
+      prolog,
+      AS_InstrList(AS_Label(Format("%s:\n\t.cfi_startproc", s), frame->name), body),
+      "\t.cfi_endproc\t\t\t; -- End function");
 }
