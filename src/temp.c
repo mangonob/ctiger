@@ -11,9 +11,9 @@ struct Temp_map_
   Temp_map under;
 };
 
+static int temps = 100;
 Temp_temp Temp_newtemp(void)
 {
-  static int temps = 100;
   Temp_temp p = _malloc(sizeof(*p));
   p->num = temps++;
   return p;

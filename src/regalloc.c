@@ -58,13 +58,14 @@ static AS_instrList instrListLast(AS_instrList l)
   return l;
 }
 
-static AS_instrList rewriteInstr(AS_instrList il, AS_instr instr, Temp_temp spill, F_access acc)
+static AS_instrList rewriteInstr(AS_instrList il, AS_instr instr, Temp_temp spill, F_access acc, SET_set newTemps)
 {
   AS_instrList last = instrListLast(il);
 
   bool used = false;
   bool defined = false;
   Temp_temp t = Temp_newtemp();
+  SET_enter(newTemps, t);
   int offset = F_accessOffset(acc);
 
   for (Temp_tempList src = getSrc(instr); src; src = src->tail)
@@ -116,7 +117,7 @@ static bool defined(AS_instr instr, Temp_temp t)
   return false;
 }
 
-static AS_instrList rewriteProgram(F_frame f, AS_instrList il, Temp_tempList spills)
+static AS_instrList rewriteProgram(F_frame f, AS_instrList il, Temp_tempList spills, SET_set newTemps)
 {
   TAB_table accs = TAB_empty();
   for (Temp_tempList tl = spills; tl; tl = tl->tail)
@@ -135,7 +136,7 @@ static AS_instrList rewriteProgram(F_frame f, AS_instrList il, Temp_tempList spi
       if (used(instr, spill) || defined(instr, spill))
       {
         F_access acc = TAB_lookup(accs, spill);
-        n = rewriteInstr(n, instr, spill, acc);
+        n = rewriteInstr(n, instr, spill, acc, newTemps);
       }
     }
 
@@ -266,23 +267,24 @@ static AS_instrList reduceLabel(AS_instrList iList)
   return rl;
 }
 
-static COL_result colorInstrList(F_frame frame, AS_instrList il)
+static COL_result colorInstrList(F_frame frame, AS_instrList il, SET_set newTemps)
 {
   G_graph flow = FG_AssemFlowGraph(il);
   Live_graph live = Live_liveness(flow);
-  return COL_color(live.graph, F_initialRegisters(frame), live.moves, live.nodeMoves, live.spillCosts, F_registers());
+  return COL_color(live.graph, F_initialRegisters(frame), live.moves, live.nodeMoves, live.spillCosts, F_registers(), newTemps);
 }
 
 RA_result RA_regAlloc(F_frame frame, AS_instrList il)
 {
   COL_result col_result;
+  SET_set newTemps = SET_empty();
   for (int try = 7; try; try--)
   {
-    col_result = colorInstrList(frame, il);
+    col_result = colorInstrList(frame, il, newTemps);
 
     if (col_result.spills)
     {
-      il = rewriteProgram(frame, il, col_result.spills);
+      il = rewriteProgram(frame, il, col_result.spills, newTemps);
     }
     else
     {

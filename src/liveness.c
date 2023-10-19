@@ -145,7 +145,7 @@ void generateConflictMap(Live_graph *g, G_graph flow, G_table out)
   }
 
   // reserved registers
-  Temp_tempList rtl = mkTempList(F_SP(), F_FP(), F_ZERO(), NULL);
+  Temp_tempList rtl = mkTempList(F_SP(), F_FP(), F_ZERO(), F_RA(), NULL);
   G_nodeList reserve = NULL;
   for (; rtl; rtl = rtl->tail)
     reserve = G_NodeList(requestNode(conflict, nodes, rtl->head), reserve);

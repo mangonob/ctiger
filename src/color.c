@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <math.h>
+#include <assert.h>
 #include "color.h"
 #include "set.h"
 #include "liveness.h"
@@ -29,6 +30,7 @@ typedef struct
   G_table nodeMoves;
   G_table alias;
   Temp_map color;
+  SET_set newTemps;
 
   // Map temp to nodes;
   TAB_table nodes;
@@ -414,11 +416,18 @@ static double spillCosts(G_node n)
 
 static void selectSpill()
 {
+  G_nodeList nl = NULL;
+  for (List_list el = SET_elements(context.spillWorklist); el; el = el->tail)
+    if (!SET_contains(context.newTemps, node2Temp(el->head)))
+      nl = G_NodeList(el->head, nl);
+
+  assert(nl);
+
   double maxCost = -INFINITY;
   G_node m = NULL;
-  for (List_list el = SET_elements(context.spillWorklist); el; el = el->tail)
+  for (; nl; nl = nl->tail)
   {
-    G_node n = el->head;
+    G_node n = nl->head;
     double cost = spillCosts(n);
     if (cost > maxCost)
     {
@@ -426,6 +435,7 @@ static void selectSpill()
       m = n;
     }
   }
+
   SET_remove(context.spillWorklist, m);
   SET_enter(context.simplifyWorklist, m);
   freezeMoves(m);
@@ -498,7 +508,7 @@ static void colorMain()
   assignColors();
 }
 
-COL_result COL_color(G_graph ig, Temp_map initial, Live_moveList moves, G_table nodeMoves, G_table spillCosts, Temp_tempList registers)
+COL_result COL_color(G_graph ig, Temp_map initial, Live_moveList moves, G_table nodeMoves, G_table spillCosts, Temp_tempList registers, SET_set newTemps)
 {
   COL_result result;
 
@@ -521,6 +531,7 @@ COL_result COL_color(G_graph ig, Temp_map initial, Live_moveList moves, G_table 
   context.alias = G_empty();
   context.color = Temp_layerMap(Temp_empty(), initial);
   context.K = Temp_listLen(registers);
+  context.newTemps = newTemps;
 
 #ifdef VERBOSE
   G_show(stdout, G_nodes(ig), print_temp);
