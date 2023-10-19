@@ -38,6 +38,7 @@ struct Temp_labelList_
   Temp_labelList tail;
 };
 Temp_labelList Temp_LabelList(Temp_label head, Temp_labelList tail);
+int Temp_labelListLen(Temp_labelList l);
 
 typedef struct Temp_map_ *Temp_map;
 Temp_map Temp_empty();

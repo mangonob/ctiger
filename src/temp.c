@@ -149,6 +149,14 @@ Temp_labelList Temp_LabelList(Temp_label head, Temp_labelList tail)
   return p;
 }
 
+int Temp_labelListLen(Temp_labelList l)
+{
+  int len = 0;
+  for (; l; l = l->tail)
+    len++;
+  return len;
+}
+
 Temp_map Temp_Map(TAB_table tab, Temp_map under)
 {
   Temp_map p = _malloc(sizeof(*p));

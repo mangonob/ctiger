@@ -230,8 +230,34 @@ static AS_instrList reduceLabel(AS_instrList iList)
     AS_instr i = iList->head;
     AS_instrList n = AS_InstrList(i, NULL);
 
-    if (i->kind == I_OPER && strcmp(i->OPER.assem, "nop") == 0)
-      continue;
+    switch (i->kind)
+    {
+    case I_OPER:
+    {
+      if (strcmp(i->OPER.assem, "nop") == 0)
+        continue;
+
+      Temp_labelList ts = instrJumps(i);
+      AS_instr next = iList->tail ? iList->tail->head : NULL;
+      if (Temp_labelListLen(ts) == 1 && next->kind == I_LABEL && ts->head == next->LABEL.label)
+      {
+        Temp_label l = next->LABEL.label;
+        TAB_push(jumps, l, SET_subtracting(TAB_lookup(jumps, l), SET_singleton(i)));
+        continue;
+      }
+
+      break;
+    }
+    case I_LABEL:
+    {
+      SET_set from = TAB_lookup(jumps, i->LABEL.label);
+      if (from == NULL || SET_isEmpty(from))
+        continue;
+      break;
+    }
+    default:
+      break;
+    }
 
     if (rl)
       last = last->tail = n;
