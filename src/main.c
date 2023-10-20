@@ -77,7 +77,10 @@ int main(int argc, char *argv[])
   bool has_input = argresult->nonamed;
   string input_filename = has_input ? argresult->nonamed->head : NULL;
   string output_filename = S_lookup(argresult->named, S_Symbol("o"));
-  output_filename = output_filename ? output_filename : S_lookup(argresult->named, S_Symbol("output"));
+  if (!output_filename)
+    output_filename = S_lookup(argresult->named, S_Symbol("output"));
+  if (!output_filename)
+    output_filename = "a.s";
 
   do_sym = S_lookup(argresult->named, S_Symbol("symbol"));
   raw = S_lookup(argresult->named, S_Symbol("raw")) != NULL;

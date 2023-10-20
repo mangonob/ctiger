@@ -202,7 +202,7 @@ Temp_tempList F_registers()
           F_calleesaves()),
       Temp_listSplice(
           F_arguments(),
-          mkTempList(F_SP(), F_FP(), F_RV(), F_ZERO(), NULL)));
+          mkTempList(F_SP(), F_FP(), F_ZERO(), NULL)));
 }
 
 Temp_map F_initialRegisters(F_frame f)

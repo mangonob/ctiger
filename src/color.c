@@ -446,6 +446,9 @@ static void assignColors()
   SET_set coloredNodes = SET_empty();
   for (G_node n = SET_pop(context.selectStack); n; n = SET_pop(context.selectStack))
   {
+#ifdef VERBOSE
+    dumpContext(stdout);
+#endif
     SET_set okColors = SET_empty();
     for (List_list el = SET_elements(context.precolored); el; el = el->tail)
     {
@@ -479,6 +482,12 @@ static void assignColors()
     Temp_temp at = node2Temp(alias);
     Temp_enter(context.color, t, Temp_look(context.color, at));
   }
+
+#ifdef VERBOSE
+  FILE *f = fopen("color_map.output", "w+");
+  Temp_dumpMap(f, context.color);
+  fclose(f);
+#endif
 }
 
 static void colorMain()

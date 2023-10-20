@@ -65,7 +65,6 @@ static AS_instrList rewriteInstr(AS_instrList il, AS_instr instr, Temp_temp spil
   bool used = false;
   bool defined = false;
   Temp_temp t = Temp_newtemp();
-  SET_enter(newTemps, t);
   int offset = F_accessOffset(acc);
 
   for (Temp_tempList src = getSrc(instr); src; src = src->tail)
@@ -93,6 +92,9 @@ static AS_instrList rewriteInstr(AS_instrList il, AS_instr instr, Temp_temp spil
     AS_instr w = AS_Oper(Format("stur `s0, [`s1, #%d]\t\t\t;%d bytes folded spill", offset, F_wordSize), NULL, L(t, F_FP()), NULL);
     last = last->tail = AS_InstrList(w, NULL);
   }
+
+  if (used || defined)
+    SET_enter(newTemps, t);
 
   return il;
 }

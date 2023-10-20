@@ -132,13 +132,15 @@ void G_show(FILE *out, G_nodeList p, void showInfo(FILE *, void *))
     if (succs)
     {
       fprintf(out, "\t==> { ");
+      int count = 0;
       for (; succs; succs = succs->tail)
       {
+        count++;
         showInfo(out, G_nodeInfo(succs->head));
         if (succs->tail)
           fprintf(out, ", ");
       }
-      fprintf(out, " }");
+      fprintf(out, " } @%d", count);
     }
 
     fprintf(out, "\n");
