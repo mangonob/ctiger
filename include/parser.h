@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_USERS_MANGONOB_DEVELOPER_CTIGER_SRC_PARSER_H_INCLUDED
-# define YY_YY_USERS_MANGONOB_DEVELOPER_CTIGER_SRC_PARSER_H_INCLUDED
+#ifndef YY_YY_USERS_MANGONOB_DEVELOPER_CTIGER_INCLUDE_PARSER_H_INCLUDED
+# define YY_YY_USERS_MANGONOB_DEVELOPER_CTIGER_INCLUDE_PARSER_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -125,7 +125,7 @@ union YYSTYPE
     A_tyfield   tyfield;
     A_id    id;
 
-#line 129 "/Users/mangonob/Developer/ctiger/src/parser.h"
+#line 129 "/Users/mangonob/Developer/ctiger/include/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -154,4 +154,4 @@ extern YYLTYPE yylloc;
 int yyparse (FILE *input);
 
 
-#endif /* !YY_YY_USERS_MANGONOB_DEVELOPER_CTIGER_SRC_PARSER_H_INCLUDED  */
+#endif /* !YY_YY_USERS_MANGONOB_DEVELOPER_CTIGER_INCLUDE_PARSER_H_INCLUDED  */

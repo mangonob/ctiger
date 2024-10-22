@@ -4,20 +4,27 @@ project(ctiger)
 
 set(CMAKE_C_STANDARD 11)
 
-include_directories("./include")
-
 set(SRC ${CMAKE_SOURCE_DIR}/src)
+set(INCLUDE ${CMAKE_SOURCE_DIR}/include)
 
-file(GLOB_RECURSE SOURCES ${SRC}/*.c ${SRC}/parser.c ${SRC}/lexer.c)
+include_directories(${INCLUDE})
 
-add_executable(tigerc ${SOURCES})
+file(GLOB_RECURSE SOURCES ${SRC}/*.c)
+
+add_executable(tigerc ${SOURCES} ${SRC}/parser.c ${SRC}/lexer.c ${SRC}/tree_tiling.c)
 
 install(TARGETS tigerc DESTINATION bin)
 
 add_custom_command(
   OUTPUT ${SRC}/parser.c
-  COMMAND bison -r all -d -o ${SRC}/parser.c ${SRC}/parser.yy
+  COMMAND bison -r all --header=${INCLUDE}/parser.h -o ${SRC}/parser.c ${SRC}/parser.yy
   DEPENDS ${SRC}/parser.yy
+)
+
+add_custom_command(
+  OUTPUT ${SRC}/tree_tiling.c
+  COMMAND bison -r all --header=${INCLUDE}/tree_tiling.h -o ${SRC}/tree_tiling.c ${SRC}/tree_tiling.yy
+  DEPENDS ${SRC}/tree_tiling.yy
 )
 
 add_custom_command(

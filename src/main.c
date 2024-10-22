@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include "absyn.h"
 #include "parser.h"
 #include "print_tree.h"
@@ -15,7 +16,6 @@
 #include "liveness.h"
 #include "regalloc.h"
 #include "codegen.h"
-#include <string.h>
 
 extern int yyparse(FILE *input);
 extern A_exp tgroot;
