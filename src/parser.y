@@ -2,17 +2,17 @@
 #include <math.h>
 #include <stdio.h>
 #include "absyn.h"
-#define YYERROR_VERBOSE
-#define YYPARSE_PARAM input
-#define YYLEX_PARAM input
 #define LOC(x) ((A_Pos){ .column = (x).first_column, .row = (x).first_line})
 
 int yylex(FILE *input);
-void yyerror(char *s);
+void yyerror(FILE *input, const char *s);
 A_exp tgroot;
 %}
 
 %locations
+%lex-param      { input }
+%parse-param    { FILE *input }
+%define parse.error verbose
 
 /* BISON Declarations */
 %union {
@@ -194,6 +194,6 @@ id:         ID                                  { $$ = A_Id(LOC(@1), S_Symbol($1
 
 %%
 
-void yyerror(char *s) {
+void yyerror(FILE *input, const char *s) {
     fprintf(stderr, "parser error: %s at line: %d, column: %d\n", s, yylloc.first_line, yylloc.first_column);
 }

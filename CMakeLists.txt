@@ -16,7 +16,7 @@ install(TARGETS tigerc DESTINATION bin)
 
 add_custom_command(
   OUTPUT ${SRC}/parser.c
-  COMMAND yacc -r all -d -o ${SRC}/parser.c ${SRC}/parser.y
+  COMMAND yacc -r all -d -Wno-yacc -o ${SRC}/parser.c ${SRC}/parser.y
   DEPENDS ${SRC}/parser.y
 )
 
