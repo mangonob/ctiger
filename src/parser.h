@@ -102,56 +102,6 @@ extern int yydebug;
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
-/* Token kinds.  */
-#define YYEMPTY -2
-#define YYEOF 0
-#define YYerror 256
-#define YYUNDEF 257
-#define WHILE 258
-#define FOR 259
-#define TO 260
-#define BREAK 261
-#define LET 262
-#define IN 263
-#define END 264
-#define FUNCTION 265
-#define VAR 266
-#define TYPE 267
-#define ARRAY 268
-#define IF 269
-#define THEN 270
-#define ELSE 271
-#define DO 272
-#define OF 273
-#define NIL 274
-#define COMMA 275
-#define COLON 276
-#define SEMICOLON 277
-#define LPAREN 278
-#define RPAREN 279
-#define LBRACE 280
-#define RBRACE 281
-#define LRACKET 282
-#define RRACKET 283
-#define DOT 284
-#define PLUS 285
-#define MINUS 286
-#define TIMES 287
-#define DIVIDE 288
-#define EQ 289
-#define NOTEQ 290
-#define LT 291
-#define LE 292
-#define GT 293
-#define GE 294
-#define AND 295
-#define OR 296
-#define ASSIGN 297
-#define STRING 298
-#define INT 299
-#define ID 300
-#define LVALUE 301
-#define UMINUS 302
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -175,7 +125,7 @@ union YYSTYPE
     A_tyfield   tyfield;
     A_id    id;
 
-#line 179 "/Users/mangonob/Developer/ctiger/src/parser.h"
+#line 129 "/Users/mangonob/Developer/ctiger/src/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
