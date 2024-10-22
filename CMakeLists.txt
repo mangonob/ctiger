@@ -16,8 +16,8 @@ install(TARGETS tigerc DESTINATION bin)
 
 add_custom_command(
   OUTPUT ${SRC}/parser.c
-  COMMAND bison -r all -d -o ${SRC}/parser.c ${SRC}/parser.y
-  DEPENDS ${SRC}/parser.y
+  COMMAND bison -r all -d -o ${SRC}/parser.c ${SRC}/parser.yy
+  DEPENDS ${SRC}/parser.yy
 )
 
 add_custom_command(

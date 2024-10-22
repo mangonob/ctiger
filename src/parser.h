@@ -107,7 +107,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 18 "/Users/mangonob/Developer/ctiger/src/parser.y"
+#line 18 "/Users/mangonob/Developer/ctiger/src/parser.yy"
 
     long ival;
     char *sval;
